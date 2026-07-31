@@ -1,0 +1,237 @@
+        /* Styles spécifiques à la page de chargement */
+        .page-chargement {
+            min-height: 100vh;
+            background: var(--gris-900);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Arrière-plan animé */
+        .arriere-plan-anime {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Formes géométriques animées */
+        .forme-geometrique {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--bleu-principal), var(--bleu-secondaire));
+            opacity: 0.1;
+            animation: flottement 20s infinite linear;
+        }
+
+        .forme-geometrique:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .forme-geometrique:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+            background: #0a2472;
+        }
+
+        .forme-geometrique:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            left: 10%;
+            animation-delay: -10s;
+            background: #0a2472;
+        }
+        .forme-geometrique:nth-child(4) {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            right: -100px;
+            animation-delay: -5s;
+            background: linear-gradient(135deg,#0a2472, #0a2472);
+        }
+
+        @keyframes flottement {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(0) rotate(180deg);
+            }
+            75% {
+                transform: translateY(20px) rotate(270deg);
+            }
+        }
+
+        /* Contenu du chargement */
+        .contenu-chargement {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: var(--espace-xl);
+        }
+
+        /* Logo animé */
+        .logo-chargement {
+            width: 130px;
+            height: 120px;
+            margin: 0 auto var(--espace-lg);
+            position: relative;
+        }
+
+        .logo-chargement img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(79, 70, 229, 0.5));
+        }
+
+        /* Cercle de chargement */
+        .cercle-chargement {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 3px solid transparent;
+            border-top-color: var(--bleu-principal);
+            border-radius: 50%;
+            animation: rotation 1.5s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Texte de chargement */
+        .texte-chargement {
+            color: var(--blanc);
+            font-size: var(--taille-texte-xl);
+            font-weight: 600;
+            margin-bottom: var(--espace-sm);
+            letter-spacing: 1px;
+        }
+
+        .sous-texte-chargement {
+            color: var(--gris-400);
+            font-size: var(--taille-texte-sm);
+            max-width: 400px;
+            margin: 0 auto var(--espace-lg);
+            line-height: 1.5;
+        }
+
+        /* Barre de progression */
+        .barre-progression-chargement {
+            width: 300px;
+            height: 4px;
+            background: var(--gris-800);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .remplissage-progression {
+            height: 100%;
+            background: var(--degrade-bleu);
+            border-radius: 2px;
+            width: 0%;
+            animation: progression 2s ease-in-out forwards;
+        }
+
+        @keyframes progression {
+            to { width: 100%; }
+        }
+
+        /* Statistiques de chargement */
+        .statistiques-chargement {
+            display: flex;
+            justify-content: center;
+            gap: var(--espace-xl);
+            margin-top: var(--espace-lg);
+            color: var(--gris-400);
+            font-size: var(--taille-texte-sm);
+        }
+
+        .statistique {
+            text-align: center;
+        }
+
+        .valeur-statistique-chargement {
+            display: block;
+            color: var(--blanc);
+            font-size: var(--taille-texte-lg);
+            font-weight: 600;
+            margin-bottom: var(--espace-xs);
+        }
+
+        .libelle-statistique-chargement {
+            font-size: var(--taille-texte-xs);
+        }
+
+        /* Message de bienvenue */
+        .message-bienvenue {
+            position: absolute;
+            bottom: var(--espace-xl);
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--gris-400);
+            font-size: var(--taille-texte-xs);
+            opacity: 0;
+            animation: apparition 1s ease 2.5s forwards;
+        }
+
+        @keyframes apparition {
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-chargement {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .texte-chargement {
+                font-size: var(--taille-texte-lg);
+            }
+            
+            .barre-progression-chargement {
+                width: 250px;
+            }
+            
+            .statistiques-chargement {
+                gap: var(--espace-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contenu-chargement {
+                padding: var(--espace-lg);
+            }
+            
+            .statistiques-chargement {
+                flex-direction: column;
+                gap: var(--espace-md);
+            }
+            
+            .barre-progression-chargement {
+                width: 200px;
+            }
+        }

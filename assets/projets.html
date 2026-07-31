@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projets - TGNOVA</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/projets.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="icon" type="image/png" href="logo-removebg-preview.png">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        /* Adaptation du design sans modifier les épaisseurs existantes */
+        :root {
+            --rich-black: #00072d;
+            --dark-green: #051650;
+            --bangladesh-green: #0a2472;
+            --caribbean-green: #123499;
+            --white-green: #5eaf73;
+        }
+
+        /* Style amélioré pour l'en-tête des projets - Inspiré de la bannière TGNova */
+        .en-tete-projets {
+            background: linear-gradient(135deg, var(--bleu-principal-fonce) 0%, var(--bleu-principal) 100%);
+            border-radius: var(--rayon-xl);
+            padding: var(--espace-xl) var(--espace-lg);
+            margin-bottom: var(--espace-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            box-shadow: var(--ombre-forte);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .en-tete-projets::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .en-tete-projets::after {
+            content: '\f07b\f1b3\f0ac';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            bottom: -20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+            pointer-events: none;
+            transform: rotate(-5deg);
+        }
+
+        .contenu-en-tete-projets {
+            max-width: 60%;
+            z-index: 2;
+        }
+
+        .contenu-en-tete-projets h1 {
+            background: none;
+            -webkit-text-fill-color: white;
+            color: white;
+            font-size: var(--taille-texte-2xl);
+            font-weight: 700;
+            margin-bottom: var(--espace-sm);
+        }
+
+        .contenu-en-tete-projets p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--taille-texte-base);
+            margin-bottom: 0;
+        }
+
+        .boutons-action-projets {
+            z-index: 2;
+        }
+
+        .bouton-action-principal-projets {
+            background: var(--blanc);
+            color: var(--bleu-principal-fonce);
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--rayon-complet);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            transition: var(--transition-rapide);
+            box-shadow: var(--ombre-legere);
+        }
+
+        .bouton-action-principal-projets:hover {
+            background: var(--gris-100);
+            color: var(--bleu-principal-fonce);
+            transform: translateY(-2px);
+            box-shadow: var(--ombre-moyenne);
+        }
+
+        /* Adaptation des couleurs pour les statistiques - Dégradé bleu */
+        .statistique-projet.actif::before {
+            background: linear-gradient(90deg, var(--bleu-principal-fonce), var(--bleu-principal));
+        }
+
+        .statistique-projet.en-cours::before {
+            background: linear-gradient(90deg, var(--bleu-principal-fonce), var(--bleu-principal));
+        }
+
+        .statistique-projet.termine::before {
+            background: linear-gradient(90deg, var(--white-green), #4CAF50);
+        }
+
+        .statistique-projet.en-retard::before {
+            background: linear-gradient(90deg, var(--orange), #FBBF24);
+        }
+
+        .icone-statistique-projet.bleu {
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.15), rgba(10, 36, 114, 0.15));
+            color: var(--bleu-principal-fonce);
+        }
+
+        .icone-statistique-projet.vert {
+            background: linear-gradient(135deg, rgba(94, 175, 115, 0.15), rgba(76, 175, 80, 0.15));
+            color: var(--white-green);
+        }
+
+        .icone-statistique-projet.orange {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+            color: var(--orange);
+        }
+
+        .icone-statistique-projet.violet {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15));
+            color: var(--violet);
+        }
+
+        .valeur-statistique-projet {
+            color: var(--rich-black);
+            background: linear-gradient(135deg, var(--rich-black), var(--dark-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Adaptation des filtres avec le dégradé */
+        .bouton-filtre {
+            transition: all 0.2s ease;
+            border: 1px solid var(--gris-300);
+        }
+
+        .bouton-filtre:hover {
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.1), rgba(10, 36, 114, 0.1));
+            border-color: var(--bleu-principal);
+            color: var(--bleu-principal-fonce);
+        }
+
+        .bouton-filtre.actif {
+            background: linear-gradient(135deg, var(--bleu-principal-fonce), var(--bleu-principal));
+            border-color: var(--bleu-principal-fonce);
+            color: var(--blanc);
+        }
+
+        .bouton-filtre.actif i {
+            color: var(--blanc);
+        }
+
+        /* Adaptation des cartes projet avec le dégradé */
+        .carte-projet {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gris-200);
+            transition: all 0.3s ease;
+        }
+
+        .carte-projet::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bleu-principal-fonce), var(--bleu-principal), var(--white-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .carte-projet:hover::after {
+            opacity: 1;
+        }
+
+        .carte-projet:hover {
+            border-color: var(--bleu-principal);
+            box-shadow: 0 10px 25px -5px rgba(18, 52, 153, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .categorie-projet.developpement {
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.15), rgba(10, 36, 114, 0.15));
+            color: var(--bleu-principal-fonce);
+            font-weight: 600;
+        }
+
+        .categorie-projet.design {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.15));
+            color: var(--violet);
+            font-weight: 600;
+        }
+
+        .categorie-projet.marketing {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        .categorie-projet.autre {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.15), rgba(71, 85, 105, 0.15));
+            color: var(--gris-700);
+            font-weight: 600;
+        }
+
+        .barre-progression-courte {
+            background: linear-gradient(90deg, var(--bleu-principal-fonce), var(--bleu-principal), var(--white-green));
+        }
+
+        .pourcentage-projet {
+            color: var(--bleu-principal-fonce);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--bleu-principal-fonce), var(--bleu-principal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .element-meta-projet i {
+            color: var(--bleu-principal);
+        }
+
+        /* Style amélioré pour les noms des membres - NOIR pour meilleure visibilité */
+        .membres-projet {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--espace-lg);
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .avatar-membre {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--rayon-complet);
+            border: 2px solid var(--blanc);
+            margin-left: -8px;
+            overflow: hidden;
+            box-shadow: var(--ombre-legere);
+            transition: transform 0.2s ease;
+        }
+
+        .avatar-membre:first-child {
+            margin-left: 0;
+        }
+
+        .avatar-membre:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .avatar-membre img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .plus-membres {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--rayon-complet);
+            background: linear-gradient(135deg, var(--gris-200), var(--gris-300));
+            color: #000000; /* Noir pur */
+            font-size: var(--taille-texte-xs);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -8px;
+            border: 2px solid var(--blanc);
+            box-shadow: var(--ombre-legere);
+        }
+
+        /* Style pour les noms des membres dans la modale d'info */
+        .infos-membre h4 {
+            font-size: var(--taille-texte-sm);
+            font-weight: 700;
+            color: #000000; /* Noir pur */
+            margin-bottom: 2px;
+        }
+
+        .infos-membre p {
+            font-size: var(--taille-texte-xs);
+            color: var(--gris-600);
+        }
+
+        .membre-info {
+            background: linear-gradient(135deg, var(--gris-50), var(--gris-100));
+            border: 1px solid var(--gris-200);
+        }
+
+        /* Badges de statut avec dégradés */
+        .badge-statut-projet.actif {
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.15), rgba(10, 36, 114, 0.15));
+            color: var(--bleu-principal-fonce);
+            font-weight: 700;
+        }
+
+        .badge-statut-projet.termine {
+            background: linear-gradient(135deg, rgba(94, 175, 115, 0.15), rgba(76, 175, 80, 0.15));
+            color: var(--white-green);
+            font-weight: 700;
+        }
+
+        .badge-statut-projet.en-retard {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+            color: var(--orange);
+            font-weight: 700;
+        }
+
+        /* Boutons d'action avec dégradés */
+        .bouton-action-projet {
+            background: var(--blanc);
+            border: 1px solid var(--gris-300);
+            color: var(--gris-700);
+            transition: all 0.2s ease;
+        }
+
+        .bouton-action-projet.ouvrir:hover {
+            background: linear-gradient(135deg, var(--bleu-principal-clair), rgba(18, 52, 153, 0.2));
+            border-color: var(--bleu-principal);
+            color: var(--bleu-principal-fonce);
+            transform: scale(1.1);
+        }
+
+        .bouton-action-projet.editer:hover {
+            background: linear-gradient(135deg, rgba(94, 175, 115, 0.15), rgba(76, 175, 80, 0.15));
+            border-color: var(--white-green);
+            color: var(--white-green);
+            transform: scale(1.1);
+        }
+
+        .bouton-action-projet.favori:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.15));
+            border-color: #fbbf24;
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+
+        .bouton-action-projet.supprimer:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15));
+            border-color: var(--rouge);
+            color: var(--rouge);
+            transform: scale(1.1);
+        }
+
+        /* Adaptation de la vue tableau avec dégradés */
+        .vue-tableau-projets {
+            border: 1px solid var(--gris-200);
+            border-radius: var(--rayon-xl);
+            overflow: hidden;
+            box-shadow: var(--ombre-legere);
+        }
+
+        .tableau-projets thead {
+            background: linear-gradient(135deg, var(--rich-black), var(--dark-green), var(--bangladesh-green));
+        }
+
+        .tableau-projets th {
+            color: var(--blanc);
+            font-weight: 600;
+            padding: 1rem;
+            font-size: var(--taille-texte-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tableau-projects tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .tableau-projets tbody tr:hover {
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.05), rgba(10, 36, 114, 0.05));
+            cursor: pointer;
+        }
+
+        .tableau-projets td {
+            padding: 1rem;
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-800);
+            vertical-align: middle;
+            border-bottom: 1px solid var(--gris-200);
+        }
+
+        /* Style pour le selecteur de vue */
+        .selecteur-vue-projets {
+            border-radius: var(--rayon-md);
+            border: 1px solid var(--gris-300);
+            background: var(--blanc);
+            color: var(--gris-700);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .selecteur-vue-projets:focus {
+            outline: none;
+            border-color: var(--bleu-principal);
+            box-shadow: 0 0 0 3px rgba(18, 52, 153, 0.15);
+        }
+
+        .selecteur-vue-projets:hover {
+            border-color: var(--bleu-principal);
+            background: linear-gradient(135deg, rgba(18, 52, 153, 0.05), rgba(10, 36, 114, 0.05));
+        }
+
+        /* Animation subtile au survol des statistiques */
+        .statistique-projet {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .statistique-projet:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -10px rgba(18, 52, 153, 0.2);
+        }
+
+        /* Style pour l'état vide */
+        .icone-etat-vide-projets {
+            color: var(--gris-400);
+            font-size: 3rem;
+        }
+
+        .etat-vide-projets h3 {
+            color: var(--gris-700);
+            font-weight: 600;
+            margin: var(--espace-md) 0 var(--espace-xs);
+        }
+
+        .etat-vide-projets p {
+            color: var(--gris-500);
+        }
+
+        /* Adaptation mobile */
+        @media (max-width: 768px) {
+            .en-tete-projets {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--espace-lg);
+            }
+            
+            .contenu-en-tete-projets {
+                max-width: 100%;
+                margin-bottom: var(--espace-lg);
+            }
+            
+            .bouton-action-principal-projets {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .en-tete-projets::after {
+                display: none;
+            }
+            
+            .membres-projet {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .avatar-membre, .plus-membres {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+    <!-- Loading Overlay -->
+    <script src="../js/loading-overlay.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="conteneur-principal">
+        
+        <!-- Barre latérale -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <div class="en-tete-barre-laterale">
+                <a href="../dashboard.html" class="logo">
+                    <div class="icone-logo">
+                        <i class="fas fa-satellite-dish"></i> <!-- Icône changée pour correspondre à l'esprit télécom -->
+                    </div>
+                    <span class="texte-logo">TGNOVA</span>
+                </a>
+                <button class="bouton-reduction-barre-laterale" id="boutonReductionBarreLaterale">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <nav class="menu-navigation">
+                <a href="../dashboard.html" class="lien-navigation">
+                    <i class="fas fa-home icone-navigation"></i>
+                    <span class="texte-navigation">Dashboard</span>
+                </a>
+                <a href="../assets/projets.html" class="lien-navigation actif">
+                    <i class="fas fa-folder icone-navigation"></i>
+                    <span class="texte-navigation">Projets</span>
+                </a>
+                <a href="../assets/taches.html" class="lien-navigation">
+                    <i class="fas fa-tasks icone-navigation"></i>
+                    <span class="texte-navigation">Tâches</span>
+                </a>
+                <a href="../assets/discussions.html" class="lien-navigation">
+                    <i class="fas fa-comments icone-navigation"></i>
+                    <span class="texte-navigation">Discussions</span>
+                </a>
+                <a href="../assets/parametres.html" class="lien-navigation">
+                    <i class="fas fa-cog icone-navigation"></i>
+                    <span class="texte-navigation">Paramètres</span>
+                </a>
+            </nav>
+
+            <div class="pied-barre-laterale">
+                <div class="profil-utilisateur">
+                    <div class="avatar-utilisateur">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=4F46E5&color=fff" alt="Photo de profil">
+                    </div>
+                    <div class="infos-utilisateur">
+                        <span class="nom-utilisateur" id="nomUtilisateur"></span>
+                        <span class="email-utilisateur" id="emailUtilisateur"></span>
+                    </div>
+                    <button class="bouton-deconnexion" id="boutonDeconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="contenu-principal">
+            <!-- En-tête -->
+            <header class="en-tete">
+                <div class="gauche-en-tete">
+                    <button class="bouton-menu-mobile" id="boutonMenuMobile">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="fil-ariane">
+                        <span class="page-actuelle">Projets</span>
+                    </div>
+                </div>
+
+                <div class="droite-en-tete">
+                    <div class="conteneur-recherche">
+                        <i class="fas fa-search icone-recherche"></i>
+                        <input type="text" class="champ-recherche" id="champRechercheProjets" placeholder="Rechercher un projet...">
+                    </div>
+
+                    <div class="actions-en-tete">
+                        <button class="bouton-action bouton-theme" id="boutonTheme" title="Changer le thème">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <div class="conteneur-notifications">
+                            <button class="bouton-action bouton-notifications" id="boutonNotifications" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge-notification">0</span>
+                            </button>
+                            <div class="menu-deroulant-notifications" id="menuDeroulantNotifications"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div class="zone-contenu">
+                <!-- En-tête des projets - Style amélioré inspiré de la bannière TGNova -->
+                <div class="en-tete-projets">
+                    <div class="contenu-en-tete-projets">
+                        <h1>Gestion des Projets</h1>
+                        <p>Suivez et gérez tous vos projets en un seul endroit</p>
+                    </div>
+                    <div class="boutons-action-projets">
+                        <button class="bouton-action-principal-projets" id="boutonNouveauProjet">
+                            <i class="fas fa-plus"></i>
+                            Nouveau projet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistiques des projets -->
+                <div class="statistiques-projets">
+                    <div class="statistique-projet actif">
+                        <div class="icone-statistique-projet bleu">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="contenu-statistique-projet">
+                            <h3>Projets actifs</h3>
+                            <p class="valeur-statistique-projet" id="statProjetsActifs">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-projet termine">
+                        <div class="icone-statistique-projet vert">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="contenu-statistique-projet">
+                            <h3>Projets terminés</h3>
+                            <p class="valeur-statistique-projet" id="statProjetsTermines">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-projet en-retard">
+                        <div class="icone-statistique-projet orange">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contenu-statistique-projet">
+                            <h3>En retard</h3>
+                            <p class="valeur-statistique-projet" id="statProjetsEnRetard">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-projet">
+                        <div class="icone-statistique-projet violet">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="contenu-statistique-projet">
+                            <h3>Équipes impliquées</h3>
+                            <p class="valeur-statistique-projet" id="statEquipesImpliquees">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contrôles de vue -->
+                <div class="controles-vue">
+                    <select class="selecteur-vue-projets" id="selecteurVueProjets">
+                        <option value="grille">Vue grille</option>
+                        <option value="tableau">Vue tableau</option>
+                    </select>
+                </div>
+
+                <!-- Filtres -->
+                <div class="filtres-projets">
+                    <button class="bouton-filtre actif" data-filtre="tous">
+                        <i class="fas fa-layer-group"></i>
+                        Tous les projets
+                    </button>
+                    <button class="bouton-filtre" data-filtre="actifs">
+                        <i class="fas fa-play-circle"></i>
+                        Actifs
+                    </button>
+                    <button class="bouton-filtre" data-filtre="termines">
+                        <i class="fas fa-check-circle"></i>
+                        Terminés
+                    </button>
+                    <button class="bouton-filtre" data-filtre="en-retard">
+                        <i class="fas fa-clock"></i>
+                        En retard
+                    </button>
+                    <button class="bouton-filtre" data-filtre="favoris">
+                        <i class="fas fa-star"></i>
+                        Favoris
+                    </button>
+                </div>
+
+                <!-- Vue grille (par défaut) -->
+                <div class="grille-projets" id="vueGrilleProjets"></div>
+
+                <!-- Vue tableau (alternative) -->
+                <div class="vue-tableau-projets" id="vueTableauProjets">
+                    <table class="tableau-projets">
+                        <thead>
+                            <tr>
+                                <th>Nom du projet</th>
+                                <th>Catégorie</th>
+                                <th>Progression</th>
+                                <th>Statut</th>
+                                <th>Date limite</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpsTableauProjets"></tbody>
+                    </table>
+                </div>
+
+                <!-- État vide -->
+                <div class="etat-vide-projets" id="etatVideProjets" style="display: none;">
+                    <div class="icone-etat-vide-projets">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3>Aucun projet trouvé</h3>
+                    <p>Commencez par créer votre premier projet</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modale de formulaire pour les projets -->
+    <div class="modale-overlay" id="modaleProjet">
+        <div class="modale-projet">
+            <div class="en-tete-modale">
+                <h2 id="titreModaleProjet">Nouveau projet</h2>
+                <button class="bouton-fermer-modale" id="boutonFermerModale">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="formulaireProjet">
+                <div class="corps-modale">
+                    <input type="hidden" id="projetId" value="">
+                    
+                    <div class="groupe-formulaire">
+                        <label for="titreProjet">Titre du projet *</label>
+                        <input type="text" id="titreProjet" name="titreProjet" required>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="categorieProjet">Catégorie *</label>
+                        <select id="categorieProjet" name="categorieProjet" required>
+                            <option value="">Sélectionnez une catégorie</option>
+                            <option value="developpement">Développement</option>
+                            <option value="design">Design</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="descriptionProjet">Description</label>
+                        <textarea id="descriptionProjet" name="descriptionProjet" placeholder="Décrivez brièvement le projet..."></textarea>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="dateDebutProjet">Date de début *</label>
+                        <input type="date" id="dateDebutProjet" name="dateDebutProjet" required>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="dateLimiteProjet">Date limite *</label>
+                        <input type="date" id="dateLimiteProjet" name="dateLimiteProjet" required>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="statutProjet">Statut *</label>
+                        <select id="statutProjet" name="statutProjet" required>
+                            <option value="actif">Actif</option>
+                            <option value="termine">Terminé</option>
+                            <option value="en-retard">En retard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="progressionProjet">Progression (%)</label>
+                        <input type="range" id="progressionProjet" name="progressionProjet" min="0" max="100" value="0" oninput="document.getElementById('valeurProgression').textContent = this.value + '%'">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: var(--gris-600);">0%</span>
+                            <span id="valeurProgression" style="font-weight: 600; color: var(--bleu-principal);">0%</span>
+                            <span style="font-size: 0.75rem; color: var(--gris-600);">100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="groupe-formulaire">
+                        <label for="membresProjet">Membres de l'équipe</label>
+                        <select id="membresProjet" name="membresProjet" multiple style="height: 100px;">
+                            <option value="">Chargement des utilisateurs...</option>
+                        </select>
+                        <small style="display: block; margin-top: 0.25rem; color: var(--gris-500);">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs membres</small>
+                    </div>
+                </div>
+                
+                <div class="pied-modale">
+                    <button type="button" class="bouton-modale secondaire" id="boutonAnnulerProjet">Annuler</button>
+                    <button type="submit" class="bouton-modale principal" id="boutonSauvegarderProjet">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale d'information pour l'ouverture des projets -->
+    <div class="modale-overlay" id="modaleInfoProjet">
+        <div class="modale-info-projet">
+            <div class="en-tete-modale">
+                <h2>Détails du projet</h2>
+                <button class="bouton-fermer-modale" id="boutonFermerModaleInfo">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="corps-modale-info" id="corpsModaleInfo"></div>
+            
+            <div class="pied-modale-info">
+                <button type="button" class="bouton-modale secondaire" id="boutonFermerInfo">Fermer</button>
+                <button type="button" class="bouton-modale principal" id="boutonEditerDepuisInfo">Éditer le projet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script principal -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/dashboard.js"></script>
+    
+    <!-- Script spécifique aux projets -->
+    <!-- <script src="../js/projets.js"></script> -->
+     <script src="../js/projets-firebase.js"></script>
+     <script src="../js/projets-config.js"></script>
+     <!-- <script src="../js/projets-modal-advanced.js"></script> -->
+</body>
+</html>

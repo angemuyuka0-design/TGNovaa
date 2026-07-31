@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tâches - TGNOVA</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/taches.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="icon" type="image/png" href="../images/logo-removebg-preview.png">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Loading Overlay -->
+    <script src="../js/loading-overlay.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="conteneur-principal">
+        
+        <!-- Barre latérale (identique au dashboard) -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <!-- En-tête de la barre latérale -->
+            <div class="en-tete-barre-laterale">
+                <a href="../dashboard.html" class="logo">
+                    <div class="icone-logo">
+                        <i class="fas fa-satellite-dish"></i> <!-- Icône changée pour correspondre à l'esprit télécom -->
+                    </div>
+                    <span class="texte-logo">TGNOVA</span>
+                </a>
+                <button class="bouton-reduction-barre-laterale" id="boutonReductionBarreLaterale">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <!-- Menu de navigation -->
+            <nav class="menu-navigation">
+                <a href="../dashboard.html" class="lien-navigation">
+                    <i class="fas fa-home icone-navigation"></i>
+                    <span class="texte-navigation">Dashboard</span>
+                </a>
+                <a href="../assets/projets.html" class="lien-navigation">
+                    <i class="fas fa-folder icone-navigation"></i>
+                    <span class="texte-navigation">Projets</span>
+                </a>
+                <a href="../assets/taches.html" class="lien-navigation actif">
+                    <i class="fas fa-tasks icone-navigation"></i>
+                    <span class="texte-navigation">Tâches</span>
+                </a>
+                <a href="../assets/discussions.html" class="lien-navigation">
+                    <i class="fas fa-comments icone-navigation"></i>
+                    <span class="texte-navigation">Discussions</span>
+                    <span class="badge-navigation">2</span>
+                </a>
+                <a href="../assets/parametres.html" class="lien-navigation">
+                    <i class="fas fa-cog icone-navigation"></i>
+                    <span class="texte-navigation">Paramètres</span>
+                </a>
+            </nav>
+
+            <!-- Pied de page de la barre latérale -->
+            <div class="pied-barre-laterale">
+                <div class="profil-utilisateur">
+                    <div class="avatar-utilisateur">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=4F46E5&color=fff" alt="Avatar utilisateur" id="userAvatar">
+                    </div>
+                    <div class="infos-utilisateur">
+                        <span class="nom-utilisateur" id="userName">Chargement...</span>
+                        <span class="email-utilisateur" id="userEmail">chargement@email.com</span>
+                    </div>
+                    <button class="bouton-deconnexion" id="boutonDeconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="contenu-principal">
+            <!-- En-tête (identique au dashboard) -->
+            <header class="en-tete">
+                <!-- Partie gauche de l'en-tête -->
+                <div class="gauche-en-tete">
+                    <button class="bouton-menu-mobile" id="boutonMenuMobile">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="fil-ariane">
+                        <span class="page-actuelle">Tâches</span>
+                    </div>
+                </div>
+
+                <!-- Partie droite de l'en-tête -->
+                <div class="droite-en-tete">
+                    <!-- Recherche -->
+                    <div class="conteneur-recherche">
+                        <i class="fas fa-search icone-recherche"></i>
+                        <input type="text" class="champ-recherche" placeholder="Rechercher une tâche...">
+                    </div>
+
+                    <!-- Actions de l'en-tête -->
+                    <div class="actions-en-tete">
+                        <!-- Bouton thème -->
+                        <button class="bouton-action bouton-theme" id="boutonTheme" title="Changer le thème">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <!-- Notifications -->
+                        <div class="conteneur-notifications">
+                            <button class="bouton-action bouton-notifications" id="boutonNotifications" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge-notification" id="notificationBadge" style="display: none;">0</span>
+                            </button>
+                            <!-- Menu déroulant des notifications -->
+                            <div class="menu-deroulant-notifications" id="menuDeroulantNotifications">
+                                <div class="en-tete-notifications">
+                                    <h4>Notifications</h4>
+                                    <button class="bouton-tout-lire" id="boutonToutLire">Tout lire</button>
+                                </div>
+                                <div class="liste-notifications" id="listeNotifications">
+                                    <!-- Les notifications seront insérées ici dynamiquement -->
+                                    <div class="notification-vide">
+                                        <p>Aucune notification</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div class="zone-contenu">
+                <!-- Bannière Tâches (inspirée de la page d'accueil) -->
+                <div class="banniere-taches">
+                    <div class="texte-banniere">
+                        <h2>Gestion des tâches</h2>
+                        <p>Organisez, priorisez et suivez l'avancement de toutes vos tâches en un coup d'œil.</p>
+                        <div class="boutons-banniere">
+                            <button class="bouton-banniere-principal" id="boutonNouvelleTache">
+                                <i class="fas fa-plus-circle"></i>
+                                Nouvelle tâche
+                            </button>
+                            <button class="bouton-banniere-secondaire" onclick="exporterTaches()">
+                                <i class="fas fa-file-export"></i>
+                                Exporter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="image-banniere">
+                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-tasks"></i>
+                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+
+                <!-- Statistiques des tâches -->
+                <div class="statistiques-taches">
+                    <div class="statistique-tache">
+                        <div class="icone-statistique-tache bleu">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="contenu-statistique-tache">
+                            <h3>Tâches totales</h3>
+                            <p class="valeur-statistique-tache" id="totalTaches">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-tache">
+                        <div class="icone-statistique-tache vert">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="contenu-statistique-tache">
+                            <h3>Terminées</h3>
+                            <p class="valeur-statistique-tache" id="tachesTerminees">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-tache">
+                        <div class="icone-statistique-tache orange">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contenu-statistique-tache">
+                            <h3>En cours</h3>
+                            <p class="valeur-statistique-tache" id="tachesEnCours">0</p>
+                        </div>
+                    </div>
+                    <div class="statistique-tache">
+                        <div class="icone-statistique-tache rouge">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="contenu-statistique-tache">
+                            <h3>En retard</h3>
+                            <p class="valeur-statistique-tache" id="tachesEnRetard">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liste des tâches -->
+                <div class="conteneur-taches">
+                    <!-- En-tête de la liste -->
+                    <div class="en-tete-liste-taches">
+                        <h2>Toutes les tâches</h2>
+                        <div class="controles-liste-taches">
+                            <select class="selecteur-vue" id="selecteurVue">
+                                <option value="tableau">Vue tableau</option>
+                                <option value="grille">Vue grille</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Vue tableau (par défaut) -->
+                    <div class="vue-tableau-taches">
+                        <table class="tableau-taches">
+                            <thead>
+                                <tr>
+                                    <th class="colonne-selection">
+                                        <input type="checkbox" id="selectionToutes">
+                                    </th>
+                                    <th class="colonne-titre">Tâche</th>
+                                    <th class="colonne-projet">Projet</th>
+                                    <th class="colonne-priorite">Priorité</th>
+                                    <th class="colonne-statut">Statut</th>
+                                    <th class="colonne-echeance">Échéance</th>
+                                    <th class="colonne-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableauTachesBody">
+                                <!-- Les tâches seront insérées ici dynamiquement -->
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px;">
+                                        <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 16px; display: block;"></i>
+                                        <p style="color: #666; font-size: 16px;">Aucune tâche pour le moment</p>
+                                        <button class="bouton-action-principal" style="margin-top: 16px;" onclick="document.getElementById('boutonNouvelleTache').click()">
+                                            <i class="fas fa-plus"></i> Créer une tâche
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Vue grille (alternative) -->
+                    <div class="vue-grille-taches">
+                        <div class="grille-taches" id="grilleTaches">
+                            <!-- Les cartes de tâches seront insérées ici dynamiquement -->
+                            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                                <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 16px; display: block;"></i>
+                                <p style="color: #666; font-size: 16px;">Aucune tâche pour le moment</p>
+                                <button class="bouton-action-principal" style="margin-top: 16px;" onclick="document.getElementById('boutonNouvelleTache').click()">
+                                    <i class="fas fa-plus"></i> Créer une tâche
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-taches" style="display: none;">
+                        <div class="info-pagination" id="infoPagination">
+                            Affichage de 0 à 0 sur 0 tâches
+                        </div>
+                        <div class="controles-pagination" id="controlesPagination">
+                            <button class="bouton-pagination" id="pagePrecedente" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="numero-pages" id="numerosPages"></div>
+                            <button class="bouton-pagination" id="pageSuivante" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de création/édition de tâche -->
+    <div class="modal-overlay" id="modalTache">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitre">Nouvelle Tâche</h2>
+                <button class="modal-close" id="fermerModalTache">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <form id="formTache">
+                    <div class="form-group">
+                        <label for="titreTache" class="form-label">Titre *</label>
+                        <input type="text" id="titreTache" class="form-input" placeholder="Titre de la tâche" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descriptionTache" class="form-label">Description</label>
+                        <textarea id="descriptionTache" class="form-textarea" placeholder="Description détaillée de la tâche..." rows="4"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projetTache" class="form-label">Projet</label>
+                            <select id="projetTache" class="form-select">
+                                <option value="">Sélectionner un projet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prioriteTache" class="form-label">Priorité</label>
+                            <select id="prioriteTache" class="form-select">
+                                <option value="basse">Basse</option>
+                                <option value="moyenne" selected>Moyenne</option>
+                                <option value="haute">Haute</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="statutTache" class="form-label">Statut</label>
+                            <select id="statutTache" class="form-select">
+                                <option value="a-faire">À faire</option>
+                                <option value="en-cours">En cours</option>
+                                <option value="terminee">Terminée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="echeanceTache" class="form-label">Échéance</label>
+                            <input type="date" id="echeanceTache" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignationTache" class="form-label">Assigner à</label>
+                        <select id="assignationTache" class="form-select" disabled>
+                            <option value="">Sélectionnez un projet d'abord</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="annulerModalTache">
+                    Annuler
+                </button>
+                <button type="button" class="btn-primary" id="sauvegarderTache">
+                    <i class="fas fa-save"></i> Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal-overlay" id="modalConfirmation">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Confirmation</h2>
+                <button class="modal-close" id="fermerModalConfirmation">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <p id="messageConfirmation">Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="annulerSuppression">
+                    Annuler
+                </button>
+                <button type="button" class="btn-danger" id="confirmerSuppression">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toastContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 2000;"></div>
+
+    <!-- Actions groupées -->
+    <div class="bulk-actions" id="bulkActions" style="display: none;">
+        <div class="bulk-count" id="bulkCount">0 tâche(s) sélectionnée(s)</div>
+        <button class="btn-secondary" onclick="marquerSelectionCommeTerminee()">
+            <i class="fas fa-check"></i> Marquer comme terminée
+        </button>
+        <button class="btn-danger" onclick="supprimerSelection()">
+            <i class="fas fa-trash"></i> Supprimer
+        </button>
+        <button class="btn-primary" onclick="exporterTaches()">
+            <i class="fas fa-download"></i> Exporter
+        </button>
+    </div>
+
+    <!-- Quick filters -->
+    <div class="quick-filters">
+        <button class="quick-filter active" data-filtre="tous">Toutes</button>
+        <button class="quick-filter" data-filtre="today">Aujourd'hui</button>
+        <button class="quick-filter" data-filtre="week">Cette semaine</button>
+        <button class="quick-filter" data-filtre="overdue">En retard</button>
+        <button class="quick-filter" data-filtre="mine">Mes tâches</button>
+    </div>
+        <!-- Styles supplémentaires pour l'adaptation -->
+    <style>
+        /* Bannière Tâches (inspirée de la page d'accueil) */
+        .banniere-taches {
+            background: linear-gradient(135deg, var(--bleu-principal-fonce) 0%, var(--bleu-principal) 100%);
+            border-radius: var(--rayon-xl);
+            padding: var(--espace-xl) var(--espace-lg);
+            margin-bottom: var(--espace-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            box-shadow: var(--ombre-forte);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banniere-taches::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .banniere-taches .texte-banniere {
+            max-width: 60%;
+            z-index: 2;
+        }
+        
+        .banniere-taches .texte-banniere h2 {
+            font-size: var(--taille-texte-2xl);
+            font-weight: 700;
+            margin-bottom: var(--espace-sm);
+            color: white;
+        }
+        
+        .banniere-taches .texte-banniere p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: var(--espace-md);
+        }
+        
+        .boutons-banniere {
+            display: flex;
+            gap: var(--espace-sm);
+            margin-top: var(--espace-md);
+        }
+        
+        .bouton-banniere-principal {
+            background: var(--blanc);
+            color: var(--bleu-principal-fonce);
+            padding: var(--espace-sm) var(--espace-lg);
+            border-radius: var(--rayon-complet);
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-rapide);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--espace-sm);
+        }
+        
+        .bouton-banniere-principal:hover {
+            background: var(--gris-100);
+            transform: translateY(-2px);
+            box-shadow: var(--ombre-legere);
+        }
+        
+        .bouton-banniere-secondaire {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: var(--espace-sm) var(--espace-lg);
+            border-radius: var(--rayon-complet);
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: var(--transition-rapide);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--espace-sm);
+        }
+        
+        .bouton-banniere-secondaire:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .banniere-taches .image-banniere {
+            display: flex;
+            gap: var(--espace-lg);
+            font-size: 3rem;
+            color: rgba(255,255,255,0.5);
+            z-index: 2;
+        }
+        
+        .banniere-taches .image-banniere i {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
+        
+        /* Filtres rapides */
+        .filtres-rapides-taches {
+            display: flex;
+            gap: var(--espace-sm);
+            margin-bottom: var(--espace-lg);
+            flex-wrap: wrap;
+        }
+        
+        .filtre-rapide {
+            background: var(--blanc);
+            border: 1px solid var(--gris-200);
+            border-radius: var(--rayon-complet);
+            padding: var(--espace-sm) var(--espace-lg);
+            font-size: var(--taille-texte-sm);
+            font-weight: 500;
+            color: var(--gris-600);
+            cursor: pointer;
+            transition: var(--transition-rapide);
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+        }
+        
+        .filtre-rapide i {
+            font-size: 1rem;
+        }
+        
+        .filtre-rapide:hover {
+            border-color: var(--bleu-principal);
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+        
+        .filtre-rapide.actif {
+            background: var(--bleu-principal);
+            color: white;
+            border-color: var(--bleu-principal);
+        }
+        
+        /* Amélioration des statistiques */
+        .statistiques-taches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-xl);
+        }
+        
+        .statistique-tache.carte-statistique {
+            display: flex;
+            align-items: center;
+            gap: var(--espace-md);
+            margin: 0;
+            width: 100%;
+        }
+        
+        .statistique-tache.carte-statistique .icone-statistique-tache {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--rayon-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .statistique-tache.carte-statistique .icone-statistique-tache.vert {
+            background: rgba(94, 175, 115, 0.1);
+            color: var(--vert);
+        }
+        
+        .statistique-tache.carte-statistique .icone-statistique-tache.bleu {
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+        
+        .statistique-tache.carte-statistique .icone-statistique-tache.orange {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--orange);
+        }
+        
+        .statistique-tache.carte-statistique .icone-statistique-tache.rouge {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--rouge);
+        }
+        
+        .statistique-tache.carte-statistique .contenu-statistique-tache h3 {
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-600);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .statistique-tache.carte-statistique .contenu-statistique-tache .valeur-statistique-tache {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bleu-principal-fonce);
+            line-height: 1.2;
+        }
+        
+        /* Amélioration de l'en-tête des tâches */
+        .en-tete-taches {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--espace-lg);
+            background: var(--blanc);
+            padding: var(--espace-md);
+            border-radius: var(--rayon-lg);
+            border: 1px solid var(--gris-200);
+        }
+        
+        .contenu-en-tete-taches h1 {
+            font-size: var(--taille-texte-xl);
+            font-weight: 700;
+            color: var(--bleu-principal-fonce);
+            display: flex;
+            align-items: center;
+        }
+        
+        .contenu-en-tete-taches p {
+            color: var(--gris-500);
+            font-size: var(--taille-texte-sm);
+        }
+        
+        .selecteur-vue-compact {
+            padding: var(--espace-sm) var(--espace-md);
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-md);
+            background: var(--blanc);
+            color: var(--gris-700);
+            font-size: var(--taille-texte-sm);
+            cursor: pointer;
+        }
+        
+        .selecteur-vue-compact:focus {
+            outline: none;
+            border-color: var(--bleu-principal);
+        }
+        
+        /* Amélioration des filtres */
+        .filtres-taches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-lg);
+            background: var(--blanc);
+            padding: var(--espace-md);
+            border-radius: var(--rayon-lg);
+            border: 1px solid var(--gris-200);
+        }
+        
+        /* Tableau amélioré */
+        .tableau-taches {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--blanc);
+            border-radius: var(--rayon-lg);
+            overflow: hidden;
+            box-shadow: var(--ombre-legere);
+        }
+        
+        .tableau-taches th {
+            background: var(--gris-50);
+            padding: var(--espace-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--bleu-principal-fonce);
+            border-bottom: 2px solid var(--gris-200);
+        }
+        
+        .tableau-taches td {
+            padding: var(--espace-md);
+            border-bottom: 1px solid var(--gris-200);
+            color: var(--gris-700);
+        }
+        
+        .tableau-taches tbody tr:hover {
+            background: var(--bleu-principal-clair);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .banniere-taches {
+                flex-direction: column;
+                text-align: center;
+            }
+            .banniere-taches .texte-banniere {
+                max-width: 100%;
+                margin-bottom: var(--espace-lg);
+            }
+            .boutons-banniere {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .banniere-taches .image-banniere {
+                font-size: 2rem;
+                gap: var(--espace-md);
+            }
+            .filtres-taches {
+                grid-template-columns: 1fr;
+            }
+            .statistiques-taches {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .statistiques-taches {
+                grid-template-columns: 1fr;
+            }
+            .filtres-rapides-taches {
+                flex-direction: column;
+            }
+            .filtre-rapide {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <!-- Script principal -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/dashboard.js"></script> 
+    <script src="../js/taches.js"></script> 
+    <script src="../js/taches-config.js"></script>
+    <script src="../js/taches-firebase.js"></script>
+    <script src="../js/taches-modal.js"></script>
+    <!-- <script src="../js/taches-actions.js"></script> -->
+</body>
+</html>

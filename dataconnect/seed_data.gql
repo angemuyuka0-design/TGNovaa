@@ -1,0 +1,69 @@
+mutation CreateSeedData @transaction @auth(level: PUBLIC, insecureReason: "This operation is used to seed the database with initial data and is safe to expose to the public.") {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000"
+      displayName: "demouser1"
+      createdAt: "2024-01-01T00:00:00Z"
+    }
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001"
+      displayName: "demouser2"
+      createdAt: "2024-01-01T00:00:00Z"
+    }
+  ])
+  movie_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440002"
+      title: "Inception"
+      year: 2010
+      createdAt: "2024-01-01T00:00:00Z"
+    }
+    {
+      id: "550e8400-e29b-41d4-a716-446655440003"
+      title: "The Matrix"
+      year: 1999
+      createdAt: "2024-01-01T00:00:00Z"
+    }
+  ])
+  movieList_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440004"
+      name: "My Favorite Movies"
+      userId: "550e8400-e29b-41d4-a716-446655440000"
+      createdAt: "2024-01-01T00:00:00Z"
+      updatedAt: "2024-01-01T00:00:00Z"
+      isPublic: true
+    }
+  ])
+  movieListEntry_insertMany(data: [
+    {
+      movieListId: "550e8400-e29b-41d4-a716-446655440004"
+      movieId: "550e8400-e29b-41d4-a716-446655440002"
+      position: 1
+    }
+    {
+      movieListId: "550e8400-e29b-41d4-a716-446655440004"
+      movieId: "550e8400-e29b-41d4-a716-446655440003"
+      position: 2
+    }
+  ])
+  watch_insertMany(data: [
+    {
+      movieId: "550e8400-e29b-41d4-a716-446655440002"
+      userId: "550e8400-e29b-41d4-a716-446655440000"
+      watchDate: "2024-01-05"
+      createdAt: "2024-01-05T00:00:00Z"
+    }
+  ])
+  review_insertMany(data: [
+    {
+      movieId: "550e8400-e29b-41d4-a716-446655440002"
+      userId: "550e8400-e29b-41d4-a716-446655440000"
+      watchId: "550e8400-e29b-41d4-a716-446655440005"
+      rating: 5
+      createdAt: "2024-01-05T00:00:00Z"
+      updatedAt: "2024-01-05T00:00:00Z"
+      isPublic: true
+    }
+  ])
+}

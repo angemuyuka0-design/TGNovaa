@@ -1,0 +1,985 @@
+        /* Styles spécifiques à la page des projets */
+        
+        /* En-tête des projets */
+        .en-tete-projets {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--espace-xl);
+            flex-wrap: wrap;
+            gap: var(--espace-md);
+        }
+
+        .contenu-en-tete-projets h1 {
+            font-size: var(--taille-texte-2xl);
+            font-weight: 700;
+            color: var(--gris-900);
+            margin-bottom: var(--espace-xs);
+            background: var(--degrade-bleu);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .contenu-en-tete-projets p {
+            color: var(--gris-600);
+            font-size: var(--taille-texte-sm);
+        }
+
+        /* Boutons d'action */
+        .boutons-action-projets {
+            display: flex;
+            gap: var(--espace-sm);
+        }
+
+        .bouton-action-principal-projets {
+            padding: 0.75rem 1.5rem;
+            background: var(--degrade-bleu);
+            color: var(--blanc);
+            border: none;
+            border-radius: var(--rayon-lg);
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            transition: var(--transition-rapide);
+        }
+
+        .bouton-action-principal-projets:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--ombre-forte);
+        }
+
+        /* Statistiques des projets */
+        .statistiques-projets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-xl);
+        }
+
+        .statistique-projet {
+            background: var(--blanc);
+            border: 1px solid var(--gris-200);
+            border-radius: var(--rayon-xl);
+            padding: var(--espace-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--espace-md);
+            transition: var(--transition-normale);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statistique-projet:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--ombre-moyenne);
+        }
+
+        .statistique-projet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .statistique-projet.actif::before {
+            background: var(--degrade-bleu);
+        }
+
+        .statistique-projet.en-cours::before {
+            background: var(--degrade-bleu);
+        }
+
+        .statistique-projet.termine::before {
+            background: var(--degrade-vert);
+        }
+
+        .statistique-projet.en-retard::before {
+            background: var(--degrade-orange);
+        }
+
+        .icone-statistique-projet {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--rayon-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .icone-statistique-projet.bleu {
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+
+        .icone-statistique-projet.vert {
+            background: var(--vert-clair);
+            color: var(--vert);
+        }
+
+        .icone-statistique-projet.orange {
+            background: var(--orange-clair);
+            color: var(--orange);
+        }
+
+        .icone-statistique-projet.violet {
+            background: var(--violet-clair);
+            color: var(--violet);
+        }
+
+        .contenu-statistique-projet h3 {
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-600);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .valeur-statistique-projet {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gris-900);
+        }
+
+        /* Filtres */
+        .filtres-projets {
+            display: flex;
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-xl);
+            flex-wrap: wrap;
+        }
+
+        .bouton-filtre {
+            padding: 0.625rem 1.25rem;
+            background: var(--gris-100);
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-lg);
+            color: var(--gris-700);
+            font-size: var(--taille-texte-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-rapide);
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+        }
+
+        .bouton-filtre:hover {
+            background: var(--gris-200);
+            border-color: var(--gris-400);
+        }
+
+        .bouton-filtre.actif {
+            background: var(--bleu-principal-clair);
+            border-color: var(--bleu-principal);
+            color: var(--bleu-principal);
+        }
+
+        /* Grille des projets */
+        .grille-projets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--espace-lg);
+            margin-bottom: var(--espace-xl);
+        }
+
+        .carte-projet {
+            background: var(--blanc);
+            border: 1px solid var(--gris-200);
+            border-radius: var(--rayon-xl);
+            overflow: hidden;
+            transition: var(--transition-normale);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .carte-projet:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--ombre-forte);
+            border-color: var(--bleu-principal);
+        }
+
+        /* En-tête de la carte */
+        .en-tete-carte-projet {
+            padding: var(--espace-lg);
+            border-bottom: 1px solid var(--gris-200);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: var(--espace-md);
+        }
+
+        .infos-projet-principales {
+            flex: 1;
+        }
+
+        .categorie-projet {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+            border-radius: var(--rayon-complet);
+            font-size: var(--taille-texte-xs);
+            font-weight: 600;
+            margin-bottom: var(--espace-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .categorie-projet.developpement {
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+
+        .categorie-projet.design {
+            background: var(--violet-clair);
+            color: var(--violet);
+        }
+
+        .categorie-projet.marketing {
+            background: var(--orange-clair);
+            color: var(--orange);
+        }
+
+        .categorie-projet.autre {
+            background: var(--gris-200);
+            color: var(--gris-700);
+        }
+
+        .titre-projet {
+            font-size: var(--taille-texte-lg);
+            font-weight: 600;
+            color: var(--gris-900);
+            margin-bottom: var(--espace-xs);
+            line-height: 1.4;
+        }
+
+        .description-projet {
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-600);
+            line-height: 1.5;
+            margin-bottom: var(--espace-md);
+        }
+
+        .progression-courte {
+            width: 100%;
+            height: 6px;
+            background: var(--gris-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .barre-progression-courte {
+            height: 100%;
+            background: var(--degrade-bleu);
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .pourcentage-projet {
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+            color: var(--bleu-principal);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Corps de la carte */
+        .corps-carte-projet {
+            padding: var(--espace-lg);
+            flex: 1;
+        }
+
+        .meta-projet {
+            display: flex;
+            flex-direction: column;
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-lg);
+        }
+
+        .element-meta-projet {
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-700);
+        }
+
+        .element-meta-projet i {
+            color: var(--bleu-principal);
+            width: 16px;
+            text-align: center;
+        }
+
+        .membres-projet {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--espace-lg);
+        }
+
+        .avatar-membre {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--rayon-complet);
+            border: 2px solid var(--blanc);
+            margin-left: -8px;
+            overflow: hidden;
+        }
+
+        .avatar-membre:first-child {
+            margin-left: 0;
+        }
+
+        .avatar-membre img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .plus-membres {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--rayon-complet);
+            background: var(--gris-200);
+            color: var(--gris-600);
+            font-size: var(--taille-texte-xs);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -8px;
+        }
+
+        /* Pied de la carte */
+        .pied-carte-projet {
+            padding: var(--espace-md) var(--espace-lg);
+            border-top: 1px solid var(--gris-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge-statut-projet {
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--rayon-complet);
+            font-size: var(--taille-texte-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-statut-projet.actif {
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+
+        .badge-statut-projet.termine {
+            background: var(--vert-clair);
+            color: var(--vert);
+        }
+
+        .badge-statut-projet.en-retard {
+            background: var(--orange-clair);
+            color: var(--orange);
+        }
+
+        .actions-projet {
+            display: flex;
+            gap: var(--espace-xs);
+        }
+
+        .bouton-action-projet {
+            width: 36px;
+            height: 36px;
+            background: none;
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-md);
+            color: var(--gris-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-rapide);
+        }
+
+        .bouton-action-projet:hover {
+            background: var(--gris-100);
+            color: var(--gris-800);
+        }
+
+        .bouton-action-projet.ouvrir:hover {
+            border-color: var(--bleu-principal);
+            color: var(--bleu-principal);
+        }
+
+        .bouton-action-projet.editer:hover {
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+
+        .bouton-action-projet.favori:hover {
+            border-color: var(--jaune);
+            color: var(--jaune);
+        }
+
+        .bouton-action-projet.supprimer:hover {
+            border-color: var(--rouge);
+            color: var(--rouge);
+        }
+
+        /* État vide */
+        .etat-vide-projets {
+            text-align: center;
+            padding: var(--espace-2xl);
+            color: var(--gris-500);
+            grid-column: 1 / -1;
+        }
+
+        .icone-etat-vide-projets {
+            font-size: 3rem;
+            color: var(--gris-300);
+            margin-bottom: var(--espace-lg);
+        }
+
+        /* Vue tableau (alternative) */
+        .vue-tableau-projets {
+            display: none;
+            background: var(--blanc);
+            border: 1px solid var(--gris-200);
+            border-radius: var(--rayon-xl);
+            overflow: hidden;
+            margin-bottom: var(--espace-xl);
+        }
+
+        .tableau-projets {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tableau-projets thead {
+            background: var(--gris-50);
+            border-bottom: 2px solid var(--gris-200);
+        }
+
+        .tableau-projets th {
+            padding: 1rem;
+            text-align: left;
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+            color: var(--gris-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tableau-projets tbody tr {
+            border-bottom: 1px solid var(--gris-200);
+            transition: var(--transition-rapide);
+            cursor: pointer;
+        }
+
+        .tableau-projets tbody tr:hover {
+            background: var(--bleu-principal-clair);
+        }
+
+        .tableau-projets td {
+            padding: 1rem;
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-800);
+            vertical-align: middle;
+        }
+
+        /* Contrôles de vue */
+        .controles-vue {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--espace-md);
+            margin-bottom: var(--espace-lg);
+        }
+
+        .selecteur-vue-projets {
+            padding: 0.5rem 1rem;
+            background: var(--gris-100);
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-md);
+            color: var(--gris-700);
+            font-size: var(--taille-texte-sm);
+            cursor: pointer;
+        }
+
+        /* Modales */
+        .modale-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modale-overlay.active {
+            display: flex;
+        }
+
+        .modale-projet {
+            background: var(--blanc);
+            border-radius: var(--rayon-xl);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--ombre-forte);
+            animation: modaleApparition 0.3s ease;
+        }
+
+        .modale-info-projet {
+            background: var(--blanc);
+            border-radius: var(--rayon-xl);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--ombre-forte);
+            animation: modaleApparition 0.3s ease;
+        }
+
+        @keyframes modaleApparition {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .en-tete-modale {
+            padding: var(--espace-lg);
+            border-bottom: 1px solid var(--gris-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .en-tete-modale h2 {
+            font-size: var(--taille-texte-xl);
+            font-weight: 600;
+            color: var(--gris-900);
+        }
+
+        .bouton-fermer-modale {
+            background: none;
+            border: none;
+            color: var(--gris-500);
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--rayon-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-rapide);
+        }
+
+        .bouton-fermer-modale:hover {
+            background: var(--gris-100);
+            color: var(--gris-700);
+        }
+
+        /* Corps de la modale d'information */
+        .corps-modale-info {
+            padding: var(--espace-xl);
+        }
+
+        .en-tete-info-projet {
+            margin-bottom: var(--espace-xl);
+        }
+
+        .en-tete-info-projet .categorie-projet {
+            margin-bottom: var(--espace-md);
+        }
+
+        .titre-info-projet {
+            font-size: var(--taille-texte-2xl);
+            font-weight: 700;
+            color: var(--gris-900);
+            margin-bottom: var(--espace-sm);
+            line-height: 1.3;
+        }
+
+        .description-info-projet {
+            font-size: var(--taille-texte-base);
+            color: var(--gris-600);
+            line-height: 1.6;
+            margin-bottom: var(--espace-lg);
+        }
+
+        /* Progression dans la modale d'info */
+        .progression-info {
+            margin-bottom: var(--espace-xl);
+        }
+
+        .en-tete-progression-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--espace-sm);
+        }
+
+        .en-tete-progression-info h3 {
+            font-size: var(--taille-texte-base);
+            font-weight: 600;
+            color: var(--gris-800);
+        }
+
+        .pourcentage-progression-info {
+            font-size: var(--taille-texte-base);
+            font-weight: 700;
+            color: var(--bleu-principal);
+        }
+
+        .barre-progression-info {
+            width: 100%;
+            height: 10px;
+            background: var(--gris-200);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .remplissage-progression-info {
+            height: 100%;
+            background: var(--degrade-bleu);
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+
+        /* Grille d'informations */
+        .grille-info-projet {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--espace-lg);
+            margin-bottom: var(--espace-xl);
+        }
+
+        .groupe-info {
+            background: var(--gris-50);
+            border-radius: var(--rayon-lg);
+            padding: var(--espace-lg);
+        }
+
+        .groupe-info h3 {
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+            color: var(--gris-700);
+            margin-bottom: var(--espace-md);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .element-info {
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            margin-bottom: var(--espace-sm);
+            font-size: var(--taille-texte-sm);
+            color: var(--gris-700);
+        }
+
+        .element-info:last-child {
+            margin-bottom: 0;
+        }
+
+        .element-info i {
+            color: var(--bleu-principal);
+            width: 16px;
+            text-align: center;
+        }
+
+        .valeur-info {
+            font-weight: 600;
+            color: var(--gris-900);
+        }
+
+        .statut-info {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--espace-xs);
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--rayon-complet);
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+        }
+
+        .statut-info.actif {
+            background: var(--bleu-principal-clair);
+            color: var(--bleu-principal);
+        }
+
+        .statut-info.termine {
+            background: var(--vert-clair);
+            color: var(--vert);
+        }
+
+        .statut-info.en-retard {
+            background: var(--orange-clair);
+            color: var(--orange);
+        }
+
+        /* Membres dans la modale d'info */
+        .membres-info-projet {
+            margin-bottom: var(--espace-xl);
+        }
+
+        .membres-info-projet h3 {
+            font-size: var(--taille-texte-base);
+            font-weight: 600;
+            color: var(--gris-800);
+            margin-bottom: var(--espace-lg);
+        }
+
+        .liste-membres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--espace-md);
+        }
+
+        .membre-info {
+            display: flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            background: var(--gris-50);
+            border-radius: var(--rayon-lg);
+            padding: var(--espace-md);
+            min-width: 200px;
+        }
+
+        .avatar-membre-info {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--rayon-complet);
+            overflow: hidden;
+        }
+
+        .avatar-membre-info img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .infos-membre h4 {
+            font-size: var(--taille-texte-sm);
+            font-weight: 600;
+            color: var(--gris-900);
+            margin-bottom: 2px;
+        }
+
+        .infos-membre p {
+            font-size: var(--taille-texte-xs);
+            color: var(--gris-600);
+        }
+
+        /* Pied de la modale d'info */
+        .pied-modale-info {
+            padding: var(--espace-lg);
+            border-top: 1px solid var(--gris-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--espace-sm);
+        }
+
+        /* Corps de la modale de formulaire */
+        .corps-modale {
+            padding: var(--espace-lg);
+        }
+
+        .groupe-formulaire {
+            margin-bottom: var(--espace-lg);
+        }
+
+        .groupe-formulaire label {
+            display: block;
+            margin-bottom: var(--espace-xs);
+            font-size: var(--taille-texte-sm);
+            font-weight: 500;
+            color: var(--gris-700);
+        }
+
+        .groupe-formulaire input,
+        .groupe-formulaire select,
+        .groupe-formulaire textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-md);
+            font-size: var(--taille-texte-sm);
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition-rapide);
+        }
+
+        .groupe-formulaire input:focus,
+        .groupe-formulaire select:focus,
+        .groupe-formulaire textarea:focus {
+            outline: none;
+            border-color: var(--bleu-principal);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .groupe-formulaire textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .pied-modale {
+            padding: var(--espace-lg);
+            border-top: 1px solid var(--gris-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--espace-sm);
+        }
+
+        .bouton-modale {
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--rayon-md);
+            font-size: var(--taille-texte-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-rapide);
+            border: 1px solid var(--gris-300);
+        }
+
+        .bouton-modale.secondaire {
+            background: var(--gris-100);
+            color: var(--gris-700);
+        }
+
+        .bouton-modale.secondaire:hover {
+            background: var(--gris-200);
+        }
+
+        .bouton-modale.principal {
+            background: var(--bleu-principal);
+            color: var(--blanc);
+            border-color: var(--bleu-principal);
+        }
+
+        .bouton-modale.principal:hover {
+            background: var(--bleu-principal-fonce);
+        }
+
+        /* Champ de recherche */
+        .conteneur-recherche {
+            position: relative;
+        }
+
+        .icone-recherche {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gris-500);
+        }
+
+        .champ-recherche {
+            padding: 0.625rem 0.75rem 0.625rem 2.5rem;
+            border: 1px solid var(--gris-300);
+            border-radius: var(--rayon-md);
+            font-size: var(--taille-texte-sm);
+            width: 250px;
+            transition: var(--transition-rapide);
+        }
+
+        .champ-recherche:focus {
+            outline: none;
+            border-color: var(--bleu-principal);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grille-projets {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .en-tete-projets {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .boutons-action-projets {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .grille-projets {
+                grid-template-columns: 1fr;
+            }
+            
+            .filtres-projets {
+                flex-direction: column;
+            }
+            
+            .bouton-filtre {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .statistiques-projets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .champ-recherche {
+                width: 200px;
+            }
+            
+            .grille-info-projet {
+                grid-template-columns: 1fr;
+            }
+            
+            .membre-info {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .statistiques-projets {
+                grid-template-columns: 1fr;
+            }
+            
+            .en-tete-carte-projet {
+                flex-direction: column;
+            }
+            
+            .pourcentage-projet {
+                text-align: left;
+            }
+            
+            .champ-recherche {
+                width: 150px;
+            }
+            
+            .modale-projet,
+            .modale-info-projet {
+                margin: 1rem;
+            }
+            
+            .pied-modale-info {
+                flex-direction: column;
+            }
+            
+            .pied-modale-info .bouton-modale {
+                width: 100%;
+            }
+        }

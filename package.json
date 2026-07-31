@@ -1,0 +1,13 @@
+{
+  "name": "tgnova-server",
+  "version": "1.0.0",
+  "description": "Serveur web pour l'application TGNova",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["tgnova", "server", "web"],
+  "author": "",
+  "license": "MIT"
+}

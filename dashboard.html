@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TGNOVA</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="../css/parametres.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="icon" type="image/png" href="../images/logo-removebg-preview.png">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Loading Overlay -->
+    <script src="js/loading-overlay.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="conteneur-principal">
+        
+        <!-- Barre latérale -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <!-- En-tête de la barre latérale -->
+            <div class="en-tete-barre-laterale">
+                <a href="dashboard.html" class="logo">
+                    <div class="icone-logo">
+                        <i class="fas fa-satellite-dish"></i> <!-- Icône changée pour correspondre à l'esprit télécom -->
+                    </div>
+                    <span class="texte-logo">TGNova</span>
+                </a>
+                <button class="bouton-reduction-barre-laterale" id="boutonReductionBarreLaterale">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <!-- Menu de navigation -->
+            <nav class="menu-navigation">
+                <a href="dashboard.html" class="lien-navigation actif">
+                    <i class="fas fa-home icone-navigation"></i>
+                    <span class="texte-navigation">Dashboard</span>
+                </a>
+                <a href="./assets/projets.html" class="lien-navigation">
+                    <i class="fas fa-folder icone-navigation"></i>
+                    <span class="texte-navigation">Projets</span>
+                </a>
+                <a href="./assets/taches.html" class="lien-navigation">
+                    <i class="fas fa-tasks icone-navigation"></i>
+                    <span class="texte-navigation">Tâches</span>
+                </a>
+                <a href="./assets/discussions.html" class="lien-navigation">
+                    <i class="fas fa-comments icone-navigation"></i>
+                    <span class="texte-navigation">Discussions</span>
+                    <span class="badge-navigation" id="discussionsBadge" style="display: none;">0</span>
+                </a>
+                <a href="./assets/parametres.html" class="lien-navigation">
+                    <i class="fas fa-cog icone-navigation"></i>
+                    <span class="texte-navigation">Paramètres</span>
+                </a>
+            </nav>
+
+            <!-- Pied de page de la barre latérale -->
+            <div class="pied-barre-laterale">
+                <div class="profil-utilisateur">
+                    <div class="avatar-utilisateur">
+                        <div id="avatarProfilInitiales"></div>
+                    </div>
+                    <div class="infos-utilisateur">
+                        <span class="nom-utilisateur" id="userName">Chargement...</span>
+                        <span class="email-utilisateur" id="userEmail">chargement@email.com</span>
+                    </div>
+                    <button class="bouton-deconnexion" id="boutonDeconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="contenu-principal">
+            <!-- En-tête -->
+            <header class="en-tete">
+                <!-- Partie gauche de l'en-tête -->
+                <div class="gauche-en-tete">
+                    <button class="bouton-menu-mobile" id="boutonMenuMobile">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="fil-ariane">
+                        <span class="page-actuelle">Dashboard</span>
+                    </div>
+                </div>
+
+                <!-- Partie droite de l'en-tête -->
+                <div class="droite-en-tete">
+                    <!-- Recherche -->
+                    <div class="conteneur-recherche">
+                        <i class="fas fa-search icone-recherche"></i>
+                        <input type="text" class="champ-recherche" placeholder="Rechercher...">
+                    </div>
+
+                    <!-- Actions de l'en-tête -->
+                    <div class="actions-en-tete">
+                        <!-- Bouton thème -->
+                        <button class="bouton-action bouton-theme" id="boutonTheme" title="Changer le thème">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <!-- Notifications -->
+                        <div class="conteneur-notifications">
+                            <button class="bouton-action bouton-notifications" id="boutonNotifications" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge-notification" id="notificationBadge" style="display: none;">0</span>
+                            </button>
+                            <!-- Menu déroulant des notifications -->
+                            <div class="menu-deroulant-notifications" id="menuDeroulantNotifications">
+                                <div class="en-tete-notifications">
+                                    <h4>Notifications</h4>
+                                    <button class="bouton-tout-lire" id="boutonToutLire">Tout lire</button>
+                                </div>
+                                <div class="liste-notifications" id="listeNotifications">
+                                    <!-- Les notifications seront insérées ici dynamiquement -->
+                                    <div class="notification-vide">
+                                        <p>Aucune notification</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div class="zone-contenu">
+
+                <!-- Section d'accueil -->
+                <div class="section-accueil">
+                    <div class="contenu-accueil">
+                        <h1>Bonjour, <span id="userGreeting">Utilisateur</span></h1>
+                        <p>Voici votre vue d'ensemble aujourd'hui. Restez productif et organisé.</p>
+                    </div>
+                    <div class="affichage-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="dateActuelle"></span>
+                    </div>
+                </div>
+
+                                <!-- Bannière TGNova (nouvelle section inspirée de la page d'accueil) -->
+                <div class="banniere-tgnova">
+                    <div class="texte-banniere">
+                        <h2>Bienvenue sur TGNova</h2>
+                        <p>Gérez vos projets fibre optique et tâches administratives en toute simplicité.</p>
+                        <a href="./assets/projets.html" class="bouton-banniere">Explorer les projets <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="image-banniere">
+                        <i class="fas fa-network-wired"></i>
+                        <i class="fas fa-satellite"></i>
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                </div>
+
+                <!-- Grille de statistiques -->
+                <div class="grille-statistiques">
+                    <!-- Carte statistique 1 -->
+                    <div class="carte-statistique vert">
+                        <div class="icone-statistique vert">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="infos-statistique">
+                            <h3>Tâches totales</h3>
+                            <p class="valeur-statistique" id="totalTasks">0</p>
+                            <span class="tendance-statistique positive" id="tasksTrend" style="display: none;">
+                                <i class="fas fa-arrow-up"></i> <span id="tasksTrendValue">0</span>%
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Carte statistique 2 -->
+                    <div class="carte-statistique bleu">
+                        <div class="icone-statistique bleu">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="infos-statistique">
+                            <h3>Tâches terminées</h3>
+                            <p class="valeur-statistique" id="completedTasks">0</p>
+                            <span class="tendance-statistique positive" id="completedTrend" style="display: none;">
+                                <i class="fas fa-arrow-up"></i> <span id="completedTrendValue">0</span>%
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Carte statistique 3 -->
+                    <div class="carte-statistique orange">
+                        <div class="icone-statistique orange">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="infos-statistique">
+                            <h3>En cours</h3>
+                            <p class="valeur-statistique" id="inProgressTasks">0</p>
+                            <span class="tendance-statistique negative" id="inProgressTrend" style="display: none;">
+                                <i class="fas fa-arrow-down"></i> <span id="inProgressTrendValue">0</span>%
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Carte statistique 4 -->
+                    <div class="carte-statistique violet">
+                        <div class="icone-statistique violet">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="infos-statistique">
+                            <h3>Projets actifs</h3>
+                            <p class="valeur-statistique" id="activeProjects">0</p>
+                            <span class="tendance-statistique positive" id="projectsTrend" style="display: none;">
+                                <i class="fas fa-arrow-up"></i> <span id="projectsTrendValue">0</span>%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grille de contenu -->
+                <div class="grille-contenu">
+                    <!-- Carte des tâches récentes -->
+                    <div class="carte-contenu">
+                        <div class="en-tete-carte">
+                            <h3><i class="fas fa-tasks" style="margin-right: 8px; color: var(--bleu-principal);"></i>Tâches récentes</h3>
+                            <a href="./assets/taches.html" class="lien-tout-voir">
+                                Voir tout
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="liste-taches" id="recentTasksList">
+                            <!-- Les tâches seront insérées ici dynamiquement -->
+                            <div class="aucune-donnee">
+                                <p>Aucune tâche pour le moment</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carte de progression globale -->
+                    <div class="carte-contenu">
+                        <div class="en-tete-carte">
+                            <h3><i class="fas fa-chart-line" style="margin-right: 8px; color: var(--vert);"></i>Progression globale</h3>
+                            <span class="pourcentage-progression" id="globalProgress">0%</span>
+                        </div>
+                        <div class="conteneur-progression">
+                            <div class="barre-progression" id="globalProgressBar" style="width: 0%"></div>
+                        </div>
+                        <div class="statistiques-progression">
+                            <div class="statistique-progression">
+                                <span class="libelle-statistique">À faire</span>
+                                <span class="valeur-statistique-progression" id="todoCount">0</span>
+                            </div>
+                            <div class="statistique-progression">
+                                <span class="libelle-statistique">En cours</span>
+                                <span class="valeur-statistique-progression" id="inProgressCount">0</span>
+                            </div>
+                            <div class="statistique-progression">
+                                <span class="libelle-statistique">Terminées</span>
+                                <span class="valeur-statistique-progression" id="completedCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carte des projets actifs -->
+                    <div class="carte-contenu">
+                        <div class="en-tete-carte">
+                            <h3><i class="fas fa-folder-open" style="margin-right: 8px; color: var(--orange);"></i>Projets actifs</h3>
+                            <a href="./assets/projets.html" class="lien-tout-voir">
+                                Voir tout
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="liste-projets" id="activeProjectsList">
+                            <!-- Les projets seront insérés ici dynamiquement -->
+                            <div class="aucune-donnee">
+                                <p>Aucun projet pour le moment</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carte des actions rapides -->
+                    <div class="carte-contenu">
+                        <div class="en-tete-carte">
+                            <h3><i class="fas fa-bolt" style="margin-right: 8px; color: var(--violet);"></i>Actions rapides</h3>
+                        </div>
+                        <div class="actions-rapides">
+                            <button class="bouton-action-rapide" id="newTaskBtn">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Nouvelle tâche</span>
+                            </button>
+                            <button class="bouton-action-rapide" id="newProjectBtn">
+                                <i class="fas fa-folder-plus"></i>
+                                <span>Nouveau projet</span>
+                            </button>
+                            <button class="bouton-action-rapide" id="exportReportBtn">
+                                <i class="fas fa-file-export"></i>
+                                <span>Exporter rapport</span>
+                            </button>
+                            <button class="bouton-action-rapide" id="addEventBtn">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Ajouter événement</span>
+                            </button>
+                        </div>
+                        <div class="evenements-a-venir">
+                            <h4>Événements à venir</h4>
+                            <div id="upcomingEventsList">
+                                <!-- <p class="aucune-donnee">Aucun événement à venir</p> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Div pour l'overlay mobile (sera créée dynamiquement) -->
+    <div id="overlayMobile" style="display: none;"></div>
+
+    <!-- Style pour les messages d'absence de données et les nouvelles sections -->
+    <style>
+        .aucune-donnee {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        .notification-vide {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+        
+        /* Styles pour la bannière TGNova (copiés de page-accueil.css) */
+        .banniere-tgnova {
+            background: linear-gradient(135deg, var(--bleu-principal-fonce) 0%, var(--bleu-principal) 100%);
+            border-radius: var(--rayon-xl);
+            padding: var(--espace-xl) var(--espace-lg);
+            margin-bottom: var(--espace-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            box-shadow: var(--ombre-forte);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banniere-tgnova::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .texte-banniere {
+            max-width: 60%;
+            z-index: 2;
+        }
+        
+        .texte-banniere h2 {
+            font-size: var(--taille-texte-2xl);
+            font-weight: 700;
+            margin-bottom: var(--espace-sm);
+            color: white;
+        }
+        
+        .texte-banniere p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: var(--espace-md);
+        }
+        
+        .bouton-banniere {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--espace-sm);
+            background: var(--blanc);
+            color: var(--bleu-principal-fonce);
+            padding: var(--espace-sm) var(--espace-lg);
+            border-radius: var(--rayon-complet);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-rapide);
+        }
+        
+        .bouton-banniere:hover {
+            background: var(--gris-100);
+            transform: translateY(-2px);
+            box-shadow: var(--ombre-legere);
+        }
+        
+        .image-banniere {
+            display: flex;
+            gap: var(--espace-lg);
+            font-size: 3rem;
+            color: rgba(255,255,255,0.5);
+            z-index: 2;
+        }
+        
+        .image-banniere i {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
+        
+        
+        /* Responsive pour les nouvelles sections */
+        @media (max-width: 1024px) {
+            .banniere-tgnova {
+                flex-direction: column;
+                text-align: center;
+            }
+            .texte-banniere {
+                max-width: 100%;
+                margin-bottom: var(--espace-lg);
+            }
+            .grille-offres-dashboard {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+    </style>
+
+    <!-- Script JavaScript -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/parametres-photos.js"></script>
+</body>
+</html>

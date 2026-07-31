@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussions - TGNOVA</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="icon" type="image/png" href="../images/logo-removebg-preview.png">
+    <link rel="stylesheet" href="../css/chat-modern.css">
+    <link rel="stylesheet" href="../css/discussions.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Loading Overlay -->
+    <script src="../js/loading-overlay.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="conteneur-principal">
+        
+        <!-- Barre latérale -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <div class="en-tete-barre-laterale">
+                <a href="../dashboard.html" class="logo">
+                    <div class="icone-logo">
+                        <i class="fas fa-satellite-dish"></i> <!-- Icône changée pour correspondre à l'esprit télécom -->
+                    </div>
+                    <span class="texte-logo">TGNOVA</span>
+                </a>
+                <button class="bouton-reduction-barre-laterale" id="boutonReductionBarreLaterale">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <nav class="menu-navigation">
+                <a href="../dashboard.html" class="lien-navigation">
+                    <i class="fas fa-home icone-navigation"></i>
+                    <span class="texte-navigation">Dashboard</span>
+                </a>
+                <a href="../assets/projets.html" class="lien-navigation">
+                    <i class="fas fa-folder icone-navigation"></i>
+                    <span class="texte-navigation">Projets</span>
+                </a>
+                <a href="../assets/taches.html" class="lien-navigation">
+                    <i class="fas fa-tasks icone-navigation"></i>
+                    <span class="texte-navigation">Tâches</span>
+                </a>
+                <a href="../assets/discussions.html" class="lien-navigation actif">
+                    <i class="fas fa-comments icone-navigation"></i>
+                    <span class="texte-navigation">Discussions</span>
+                    <span class="badge-navigation">2</span>
+                </a>
+                <a href="../assets/parametres.html" class="lien-navigation">
+                    <i class="fas fa-cog icone-navigation"></i>
+                    <span class="texte-navigation">Paramètres</span>
+                </a>
+            </nav>
+
+            <div class="pied-barre-laterale">
+                <div class="profil-utilisateur">
+                    <div class="avatar-utilisateur">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=4F46E5&color=fff" alt="John Doe">
+                    </div>
+                    <div class="infos-utilisateur">
+                        <span class="nom-utilisateur">Chargement...</span>
+                        <span class="email-utilisateur">Chargement@gmail.com</span>
+                    </div>
+                    <button class="bouton-deconnexion" id="boutonDeconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="contenu-principal">
+            <!-- En-tête -->
+            <header class="en-tete">
+                <div class="gauche-en-tete">
+                    <button class="bouton-menu-mobile" id="boutonMenuMobile">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="fil-ariane">
+                        <span class="page-actuelle">Discussions</span>
+                    </div>
+                </div>
+
+                <div class="droite-en-tete">
+                    <div class="conteneur-recherche">
+                        <i class="fas fa-search icone-recherche"></i>
+                        <input type="text" class="champ-recherche" placeholder="Rechercher une discussion...">
+                    </div>
+
+                    <div class="actions-en-tete">
+                        <button class="bouton-action bouton-theme" id="boutonTheme" title="Changer le thème">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <div class="conteneur-notifications">
+                            <button class="bouton-action bouton-notifications" id="boutonNotifications" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge-notification" id="notificationBadge" style="display: none;">0</span>
+                            </button>
+                            <!-- Menu déroulant des notifications -->
+                            <div class="menu-deroulant-notifications" id="menuDeroulantNotifications">
+                                <div class="en-tete-notifications">
+                                    <h4>Notifications</h4>
+                                    <button class="bouton-tout-lire" id="boutonToutLire">Tout lire</button>
+                                </div>
+                                <div class="liste-notifications" id="listeNotifications">
+                                    <!-- Les notifications seront insérées ici dynamiquement -->
+                                    <div class="notification-vide">
+                                        <p>Aucune notification</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div class="zone-contenu">
+                <div class="conteneur-discussions">
+                    <!-- Panneau latéral des conversations -->
+                    <div class="panneau-conversations">
+                        <!-- En-tête -->
+                        <div class="en-tete-conversations">
+                            <h2><i class="fas fa-comments" style="margin-right: 10px;"></i>Messages</h2>
+                            <button class="bouton-nouvelle-discussion" id="boutonNouvelleDiscussion">
+                                <i class="fas fa-plus"></i>
+                                <span>Nouvelle</span>
+                            </button>
+                        </div>
+
+                        <!-- Recherche dans le panneau -->
+                        <div class="conteneur-recherche-conversations">
+                            <input type="text" class="champ-recherche-conversations" placeholder="Rechercher une conversation..." id="rechercheConversation">
+                        </div>
+
+                        <!-- Liste des conversations -->
+                        <div class="liste-conversations">
+                            <p class="aucune-conversation">Chargement...</p>
+                        </div>
+                    </div>
+
+                    <!-- Panneau de discussion -->
+                    <div class="panneau-discussion">
+                        <!-- État vide (par défaut) -->
+                        <div class="etat-vide-discussions" id="etatVide">
+                            <i class="fas fa-comments icone-etat-vide"></i>
+                            <h3>Sélectionnez une conversation</h3>
+                            <p>Ouvrez une conversation existante ou créez une nouvelle discussion</p>
+                        </div>
+
+                        <!-- Section chat (cachée par défaut) -->
+                        <div class="section-chat">
+                            <!-- En-tête de la discussion -->
+                            <div class="entete-conversation">
+                                <!-- Contenu généré dynamiquement -->
+                            </div>
+
+                            <!-- Zone des messages -->
+                            <div class="zone-messages" id="zoneMessages">
+                                <!-- Messages générés dynamiquement -->
+                            </div>
+
+                            <!-- Indicateur "en train d'écrire" -->
+                            <div class="indicateur-saisie" id="indicateurSaisie">
+                                <p></p>
+                            </div>
+
+                            <!-- Zone de saisie -->
+                            <div class="zone-saisie">
+                                <div class="conteneur-saisie">
+                                    <textarea class="champ-saisie" id="champMessage" placeholder="Écrivez votre message..." rows="1"></textarea>
+                                    <button class="bouton-envoi" id="boutonEnvoi" title="Envoyer">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<!-- Modals -->
+<div class="modals-container" id="modalsContainer"></div>
+
+<!-- Input pour télécharger des fichiers -->
+<input type="file" id="fileUploadInput" style="display: none;" multiple>
+<input type="file" id="imageUploadInput" style="display: none;" accept="image/*" multiple>
+<input type="file" id="avatarUploadInput" style="display: none;" accept="image/*">
+
+<!-- Script principal -->
+<script src="../js/firebase-config.js"></script>
+<script src="../js/dashboard.js"></script>
+<script src="../js/discussions-firebase.js"></script>
+<script src="../js/discussions-modal-advanced.js"></script>
+<script src="../js/discussions-modal-infos.js"></script>
+</body>
+</html>

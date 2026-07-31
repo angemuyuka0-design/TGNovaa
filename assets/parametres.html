@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - TGNOVA</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/parametres.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="icon" type="image/png" href="../images/logo-removebg-preview.png">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Loading Overlay -->
+    <script src="../js/loading-overlay.js"></script>
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div class="conteneur-principal">
+        
+        <!-- Barre latérale -->
+        <aside class="barre-laterale" id="barreLaterale">
+            <div class="en-tete-barre-laterale">
+                <a href="../dashboard.html" class="logo">
+                    <div class="icone-logo">
+                        <i class="fas fa-satellite-dish"></i> <!-- Icône changée pour correspondre à l'esprit télécom -->
+                    </div>
+                    <span class="texte-logo">TGNOVA</span>
+                </a>
+                <button class="bouton-reduction-barre-laterale" id="boutonReductionBarreLaterale">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <nav class="menu-navigation">
+                <a href="../dashboard.html" class="lien-navigation">
+                    <i class="fas fa-home icone-navigation"></i>
+                    <span class="texte-navigation">Dashboard</span>
+                </a>
+                <a href="../assets/projets.html" class="lien-navigation">
+                    <i class="fas fa-folder icone-navigation"></i>
+                    <span class="texte-navigation">Projets</span>
+                </a>
+                <a href="../assets/taches.html" class="lien-navigation">
+                    <i class="fas fa-tasks icone-navigation"></i>
+                    <span class="texte-navigation">Tâches</span>
+                </a>
+                <a href="../assets/discussions.html" class="lien-navigation">
+                    <i class="fas fa-comments icone-navigation"></i>
+                    <span class="texte-navigation">Discussions</span>
+                    <span class="badge-navigation">2</span>
+                </a>
+                <a href="../assets/parametres.html" class="lien-navigation actif">
+                    <i class="fas fa-cog icone-navigation"></i>
+                    <span class="texte-navigation">Paramètres</span>
+                </a>
+            </nav>
+
+            <div class="pied-barre-laterale">
+                <div class="profil-utilisateur">
+                    <div class="avatar-utilisateur">
+                        <div  id="avatarProfilInitiales"></div>
+                    </div>
+                                
+                    <div class="infos-utilisateur">
+                        <span class="nom-utilisateur" id="userName">Chargement...</span>
+                        <span class="email-utilisateur" id="userEmail">chargement@email.com</span>
+                    </div>
+                    <button class="bouton-deconnexion" id="boutonDeconnexion">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="contenu-principal">
+            <!-- En-tête -->
+            <header class="en-tete">
+                <div class="gauche-en-tete">
+                    <button class="bouton-menu-mobile" id="boutonMenuMobile">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="fil-ariane">
+                        <span class="page-actuelle">Paramètres</span>
+                    </div>
+                </div>
+
+                <div class="droite-en-tete">
+                    <div class="conteneur-recherche">
+                        <i class="fas fa-search icone-recherche"></i>
+                        <input type="text" class="champ-recherche" placeholder="Rechercher un paramètre...">
+                    </div>
+
+                    <div class="actions-en-tete">
+                        <button class="bouton-action bouton-theme" id="boutonTheme" title="Changer le thème">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <div class="conteneur-notifications">
+                            <button class="bouton-action bouton-notifications" id="boutonNotifications" title="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge-notification">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div class="zone-contenu">
+                <!-- En-tête -->
+                <div class="en-tete-parametres">
+                    <h1>Paramètres</h1>
+                    <p>Gérez vos préférences et paramètres de compte</p>
+                </div>
+
+                <!-- Conteneur des paramètres -->
+                <div class="conteneur-parametres">
+                    <!-- Navigation -->
+                    <nav class="navigation-parametres">
+                        <div class="liste-navigation-parametres">
+                            <a href="#profil" class="element-navigation-parametres active" data-section="profil">
+                                <i class="fas fa-user icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Profil</span>
+                            </a>
+                            <a href="#compte" class="element-navigation-parametres" data-section="compte">
+                                <i class="fas fa-cog icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Compte</span>
+                            </a>
+                            <a href="#securite" class="element-navigation-parametres" data-section="securite">
+                                <i class="fas fa-shield-alt icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Sécurité</span>
+                            </a>
+                            <a href="#notifications" class="element-navigation-parametres" data-section="notifications">
+                                <i class="fas fa-bell icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Notifications</span>
+                            </a>
+                            <a href="#apparence" class="element-navigation-parametres" data-section="apparence">
+                                <i class="fas fa-palette icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Apparence</span>
+                            </a>
+                            <a href="#abonnement" class="element-navigation-parametres" data-section="abonnement">
+                                <i class="fas fa-crown icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Abonnement</span>
+                            </a>
+                            <a href="#creation-compte" class="element-navigation-parametres" data-section="creation-compte">
+                                <i class="fas fa-user-plus icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Création de compte</span>
+                            </a>
+                            <a href="#administration" class="element-navigation-parametres" data-section="administration">
+                                <i class="fas fa-tools icone-navigation-parametres"></i>
+                                <span class="texte-navigation-parametres">Administration</span>
+                            </a>
+                        </div>
+                    </nav>
+
+                    <!-- Sections de paramètres -->
+                    <div class="sections-parametres">
+                        <!-- Section Profil -->
+                        <section id="profil" class="section-parametres active">
+                            <div class="en-tete-section-parametres">
+                                <h2>Profil</h2>
+                                <p>Gérez vos informations personnelles et votre photo de profil</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <!-- Section photo de profil -->
+                                <div class="section-profil">
+                                    <div class="avatar-profil">
+                                        <div class="avatar-initiales" id="avatarProfilInitiales"></div>
+                                        <button class="bouton-changer-avatar" title="Changer la photo">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                    <div class="infos-profil">
+                                        <h3 id="nomProfil">Chargement...</h3>
+                                        <p id="detailsProfil">Chargement...</p>
+                                    </div>
+                                    
+                                </div>
+
+                                <!-- Informations personnelles -->
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Informations personnelles</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Nom complet</span>
+                                            <span class="description-parametre">Votre nom tel qu'il apparaîtra sur votre profil</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="text" class="champ-parametre" name="nom" value="" placeholder="Entrez votre nom complet">
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Adresse email</span>
+                                            <span class="description-parametre">Adresse utilisée pour la connexion et les notifications</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="email" class="champ-parametre" name="email" value="" placeholder="Entrez votre email">
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Numéro de téléphone</span>
+                                            <span class="description-parametre">Utilisé pour la vérification en deux étapes</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="tel" class="champ-parametre" name="telephone" value="" placeholder="+237 X XX XX XX XX">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Informations supplémentaires -->
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Information supplémentaire</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Bio</span>
+                                            <span class="description-parametre">Une brève description de vous-même (max 500 caractères)</span>
+                                            <span class="compteur-caracteres" id="compteur-bio">0/500</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <textarea class="champ-parametre" name="bio" rows="3" placeholder="Décrivez-vous..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Boutons d'action -->
+                                <div class="boutons-parametres">
+                                    <button class="bouton-parametre-secondaire" id="annulerProfil">
+                                        Annuler
+                                    </button>
+                                    <button class="bouton-parametre-principal" id="enregistrerProfil">
+                                        Enregistrer les modifications
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Compte -->
+                        <section id="compte" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Compte</h2>
+                                <p>Gérez les paramètres de votre compte et vos préférences</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Préférences générales</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Langue</span>
+                                            <span class="description-parametre">Langue d'affichage de l'interface</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <select class="selecteur-parametre" name="langue">
+                                                <option value="Français">Français</option>
+                                                <option value="English">English</option>
+                                                <option value="Español">Español</option>
+                                                <option value="Deutsch">Deutsch</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Fuseau horaire</span>
+                                            <span class="description-parametre">Fuseau horaire utilisé pour les dates et heures</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <select class="selecteur-parametre" name="fuseau_horaire">
+                                                <option value="Europe/Paris (UTC+1)">Europe/Paris (UTC+1)</option>
+                                                <option value="Europe/London (UTC+0)">Europe/London (UTC+0)</option>
+                                                <option value="America/New_York (UTC-5)">America/New_York (UTC-5)</option>
+                                                <option value="Asia/Tokyo (UTC+9)">Asia/Tokyo (UTC+9)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Format de date</span>
+                                            <span class="description-parametre">Format d'affichage des dates</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <select class="selecteur-parametre" name="format_date">
+                                                <option value="DD/MM/YYYY">DD/MM/YYYY (31/12/2023)</option>
+                                                <option value="MM/DD/YYYY">MM/DD/YYYY (12/31/2023)</option>
+                                                <option value="YYYY-MM-DD">YYYY-MM-DD (2023-12-31)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Thème de couleur</span>
+                                            <span class="description-parametre">Couleur principale de l'interface</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <select class="selecteur-parametre" name="theme_couleur">
+                                                <option value="bleu">Bleu</option>
+                                                <option value="violet">Violet</option>
+                                                <option value="vert">Vert</option>
+                                                <option value="orange">Orange</option>
+                                                <option value="rose">Rose</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="boutons-parametres">
+                                    <button class="bouton-parametre-principal" id="enregistrerCompte">
+                                        Enregistrer les préférences
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Sécurité -->
+                        <section id="securite" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Sécurité</h2>
+                                <p>Gérez la sécurité de votre compte et vos connexions</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Modifier le mot de passe</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Mot de passe actuel</span>
+                                            <span class="description-parametre">Entrez votre mot de passe actuel pour vérification</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="password" class="champ-parametre" id="motdepasseActuel" placeholder="••••••••">
+                                            <div class="indicateur-force" id="indicateurForceActuel"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Nouveau mot de passe</span>
+                                            <span class="description-parametre">Créez un nouveau mot de passe sécurisé (min. 8 caractères)</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="password" class="champ-parametre" id="nouveauMotdepasse" placeholder="••••••••">
+                                            <div class="indicateur-force" id="indicateurForceNouveau">
+                                                <div class="barre-force" data-niveau="0"></div>
+                                                <span class="texte-force">Faible</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Confirmer le mot de passe</span>
+                                            <span class="description-parametre">Répétez votre nouveau mot de passe</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <input type="password" class="champ-parametre" id="confirmerMotdepasse" placeholder="••••••••">
+                                            <div class="indicateur-confirmation" id="indicateurConfirmation"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="conseils-securite">
+                                        <h4>Conseils pour un mot de passe sécurisé :</h4>
+                                        <ul>
+                                            <li>Minimum 8 caractères</li>
+                                            <li>Mélange de majuscules et minuscules</li>
+                                            <li>Au moins un chiffre</li>
+                                            <li>Au moins un caractère spécial (!@#$%^&*)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="boutons-parametres">
+                                    <button class="bouton-parametre-principal" id="enregistrerSecurite">
+                                        Mettre à jour le mot de passe
+                                    </button>
+                                    <button class="bouton-parametre-secondaire" id="annulerSecurite">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Notifications -->
+                        <section id="notifications" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Notifications</h2>
+                                <p>Contrôlez comment et quand vous recevez des notifications</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Préférences générales</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Notifications par email</span>
+                                            <span class="description-parametre">Recevoir des notifications par email</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <label class="interrupteur">
+                                                <input type="checkbox" name="notif_email_general">
+                                                <span class="curseur-interrupteur"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Notifications push</span>
+                                            <span class="description-parametre">Recevoir des notifications push dans le navigateur</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <label class="interrupteur">
+                                                <input type="checkbox" name="notif_push_general">
+                                                <span class="curseur-interrupteur"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="boutons-parametres">
+                                    <button class="bouton-parametre-principal" id="enregistrerNotifications">
+                                        Enregistrer les préférences
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Apparence -->
+                        <section id="apparence" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Apparence</h2>
+                                <p>Personnalisez l'apparence de votre interface</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Thème</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Mode sombre</span>
+                                            <span class="description-parametre">Basculer entre le mode clair et sombre</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <label class="interrupteur">
+                                                <input type="checkbox" id="modeSombre">
+                                                <span class="curseur-interrupteur"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Densité de l'interface</h3>
+                                    
+                                    <div class="element-parametre">
+                                        <div class="infos-parametre">
+                                            <span class="libelle-parametre">Espacement</span>
+                                            <span class="description-parametre">Contrôler l'espacement entre les éléments</span>
+                                        </div>
+                                        <div class="controle-parametre">
+                                            <select class="selecteur-parametre" name="densite">
+                                                <option value="compact">Compact</option>
+                                                <option value="normal" selected>Normal</option>
+                                                <option value="comfortable">Confortable</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="boutons-parametres">
+                                    <button class="bouton-parametre-principal" id="enregistrerApparence">
+                                        Appliquer les changements
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Abonnement -->
+                        <section id="abonnement" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Abonnement</h2>
+                                <p>Gérez votre plan d'abonnement et vos factures</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="cartes-abonnement">
+                                    <div class="carte-abonnement">
+                                        <div class="titre-abonnement">Gratuit</div>
+                                        <div class="prix-abonnement">
+                                            €0<span>/mois</span>
+                                        </div>
+                                        <div class="liste-avantages">
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>3 projets actifs maximum</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Stockage 5GB</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Support de base</span>
+                                            </div>
+                                        </div>
+                                        <button class="bouton-parametre-secondaire" style="width: 100%;">
+                                            Plan actuel
+                                        </button>
+                                    </div>
+
+                                    <div class="carte-abonnement recommandee">
+                                        <div class="badge-recommandee">Recommandé</div>
+                                        <div class="titre-abonnement">Pro</div>
+                                        <div class="prix-abonnement">
+                                            €19<span>/mois</span>
+                                        </div>
+                                        <div class="liste-avantages">
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Projets illimités</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Stockage 50GB</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Support prioritaire</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Analytics avancés</span>
+                                            </div>
+                                        </div>
+                                        <button class="bouton-parametre-principal" style="width: 100%;">
+                                            Passer au plan Pro
+                                        </button>
+                                    </div>
+
+                                    <div class="carte-abonnement">
+                                        <div class="titre-abonnement">Entreprise</div>
+                                        <div class="prix-abonnement">
+                                            €49<span>/mois</span>
+                                        </div>
+                                        <div class="liste-avantages">
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Toutes les fonctionnalités Pro</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Stockage 500GB</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>Support 24/7</span>
+                                            </div>
+                                            <div class="avantage">
+                                                <i class="fas fa-check"></i>
+                                                <span>API personnalisée</span>
+                                            </div>
+                                        </div>
+                                        <button class="bouton-parametre-secondaire" style="width: 100%;">
+                                            Contacter les ventes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Création de compte -->
+                        <section id="creation-compte" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Création de compte</h2>
+                                <p>Créez de nouveaux comptes utilisateurs ou administrateurs</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <form id="formCreationCompte" class="formulaire-creation-compte">
+                                    <div class="groupe-parametres">
+                                        <h3 class="titre-groupe-parametres">Informations du nouveau compte</h3>
+                                        
+                                        <div class="grille-formulaire">
+                                            <div class="champ-formulaire">
+                                                <label for="nouveauNom" class="libelle-champ">Nom complet *</label>
+                                                <input type="text" id="nouveauNom" class="champ-parametre" placeholder="Prénom Nom" required>
+                                            </div>
+
+                                            <div class="champ-formulaire">
+                                                <label for="nouveauEmail" class="libelle-champ">Adresse email *</label>
+                                                <input type="email" id="nouveauEmail" class="champ-parametre" placeholder="email@exemple.com" required>
+                                            </div>
+
+                                            <div class="champ-formulaire">
+                                                <label for="nouveauPoste" class="libelle-champ">Poste</label>
+                                                <select id="nouveauPoste" class="selecteur-parametre">
+                                                    <option value="Développeur">Développeur</option>
+                                                    <option value="Designer">Designer</option>
+                                                    <option value="Manager">Manager</option>
+                                                    <option value="Marketing">Marketing</option>
+                                                    <option value="Administrateur">Administrateur</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="champ-formulaire">
+                                                <label for="nouveauRole" class="libelle-champ">Type de compte *</label>
+                                                <div class="selecteur-role">
+                                                    <div class="option-role">
+                                                        <input type="radio" id="roleUtilisateur" name="role" value="utilisateur" checked>
+                                                        <label for="roleUtilisateur">
+                                                            <i class="fas fa-user"></i>
+                                                            <span>Utilisateur</span>
+                                                            <small>Accès standard aux fonctionnalités</small>
+                                                        </label>
+                                                    </div>
+                                                    <div class="option-role">
+                                                        <input type="radio" id="roleAdmin" name="role" value="administrateur">
+                                                        <label for="roleAdmin">
+                                                            <i class="fas fa-shield-alt"></i>
+                                                            <span>Administrateur</span>
+                                                            <small>Accès complet à toutes les fonctionnalités</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="champ-formulaire">
+                                                <label for="nouveauMotdepasseCompte" class="libelle-champ">Mot de passe *</label>
+                                                <input type="password" id="nouveauMotdepasseCompte" class="champ-parametre" placeholder="••••••••" required>
+                                                <div class="indicateur-force" id="indicateurForceCreation">
+                                                    <div class="barre-force" data-niveau="0"></div>
+                                                    <span class="texte-force">Faible</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="champ-formulaire">
+                                                <label for="confirmerMotdepasseCompte" class="libelle-champ">Confirmer le mot de passe *</label>
+                                                <input type="password" id="confirmerMotdepasseCompte" class="champ-parametre" placeholder="••••••••" required>
+                                                <div class="indicateur-confirmation" id="indicateurConfirmationCreation"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="permissions-section" id="permissionsSection">
+                                            <h4>Permissions d'administrateur :</h4>
+                                            <div class="liste-permissions">
+                                                <label class="permission-item">
+                                                    <input type="checkbox" name="permission_gestion_utilisateurs">
+                                                    <span>Gestion des utilisateurs</span>
+                                                </label>
+                                                <label class="permission-item">
+                                                    <input type="checkbox" name="permission_gestion_projets">
+                                                    <span>Gestion des projets</span>
+                                                </label>
+                                                <label class="permission-item">
+                                                    <input type="checkbox" name="permission_gestion_parametres">
+                                                    <span>Modification des paramètres système</span>
+                                                </label>
+                                                <label class="permission-item">
+                                                    <input type="checkbox" name="permission_acces_complet">
+                                                    <span>Accès complet aux données</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="boutons-parametres">
+                                        <button type="reset" class="bouton-parametre-secondaire">
+                                            Réinitialiser
+                                        </button>
+                                        <button type="submit" class="bouton-parametre-principal" id="creerCompte">
+                                            <i class="fas fa-user-plus"></i>
+                                            Créer le compte
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div class="liste-comptes-crees" id="listeComptesCrees">
+                                    <h3 class="titre-groupe-parametres">Comptes créés récemment</h3>
+                                    <div class="tableau-comptes">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Nom</th>
+                                                    <th>Email</th>
+                                                    <th>Rôle</th>
+                                                    <th>Date</th>
+                                                    <th>Statut</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="corpsTableauComptes">
+                                                <!-- Les comptes créés apparaîtront ici -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section Administration -->
+                        <section id="administration" class="section-parametres">
+                            <div class="en-tete-section-parametres">
+                                <h2>Administration système</h2>
+                                <p>Outils d'administration et maintenance du système</p>
+                            </div>
+
+                            <div class="carte-parametres">
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Migration des rôles utilisateur</h3>
+                                    <p class="description-parametre">
+                                        Si vous aviez des utilisateurs avant l'ajout du système de rôles, utilisez cet outil pour migrer
+                                        automatiquement tous les utilisateurs existants et définir leur rôle approprié.
+                                    </p>
+
+                                    <div class="actions-migration">
+                                        <button id="boutonMigrerRoles" class="bouton-parametre-principal">
+                                            <i class="fas fa-database"></i>
+                                            Migrer les rôles utilisateur
+                                        </button>
+                                        <button id="boutonVerifierRoles" class="bouton-parametre-secondaire">
+                                            <i class="fas fa-eye"></i>
+                                            Vérifier les rôles
+                                        </button>
+                                    </div>
+
+                                    <div class="resultat-migration" id="resultatMigration" style="display: none;">
+                                        <div class="message-migration">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span id="texteResultatMigration"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="groupe-parametres">
+                                    <h3 class="titre-groupe-parametres">Gestion des administrateurs</h3>
+                                    <p class="description-parametre">
+                                        Définissez manuellement un utilisateur comme administrateur ou consultez la liste des administrateurs actuels.
+                                    </p>
+
+                                    <div class="actions-admin">
+                                        <div class="champ-formulaire">
+                                            <label for="userIdAdmin" class="libelle-champ">ID utilisateur à définir comme admin</label>
+                                            <input type="text" id="userIdAdmin" class="champ-parametre" placeholder="Collez l'ID utilisateur ici">
+                                        </div>
+                                        <button id="boutonDefinirAdmin" class="bouton-parametre-principal">
+                                            <i class="fas fa-shield-alt"></i>
+                                            Définir comme administrateur
+                                        </button>
+                                    </div>
+
+                                    <div class="liste-administrateurs" id="listeAdministrateurs">
+                                        <h4>Administrateurs actuels</h4>
+                                        <div class="tableau-admin" id="tableauAdmin">
+                                            <!-- Liste des administrateurs -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script principal -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/migration-roles.js"></script>
+    <script src="../js/parametres.js"></script>
+    <script src="../js/parametres-photos.js"></script>
+    <script src="../js/parametres-profil-firebase.js"></script>
+</body>
+</html>
