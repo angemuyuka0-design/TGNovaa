@@ -70,7 +70,7 @@ Elle permet aux utilisateurs de créer, organiser et suivre des projets, d'assig
 
 ### Hébergement
 
-* Firebase Hosting (prévu)
+* Firebase Hosting 
 
 ---
 
