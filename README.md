@@ -1,6 +1,6 @@
 # TGNova
 
-**TGNova (Task Gestion Nova)** est une application web de gestion de tâches et de projets destinée aux entreprises et aux équipes de travail.
+**TGNova (Task Gestion Nova)** est une application web collaborative de gestion de tâches et de projets destinée aux entreprises et aux équipes de travail.
 
 Elle permet aux utilisateurs de créer, organiser et suivre des projets, d'assigner des tâches à des équipes ou à des collaborateurs spécifiques, de définir des priorités et des échéances, tout en centralisant les échanges au sein d'un espace unique.
 
